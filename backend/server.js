@@ -159,6 +159,32 @@ app.post('/api/login', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+//Need to know if email is also given on login
+app.post('/api/createUser', async (req, res, next) => {
+    // incoming: new login, new password
+    // outgoing: id, firstName, lastName, error
+
+    var error = '';
+
+    const { login, password } = req.body;
+
+    const db = client.db();
+    const results = await db.collection('Users').insertOne({ Login: login, Password: password }).toArray();
+
+    var id = -1;
+    var fn = '';
+    var ln = '';
+
+    if (results.length > 0) {
+        id = results[0].UserId;
+        fn = results[0].FirstName;
+        ln = results[0].LastName;
+    }
+
+    var ret = { id: id, firstName: fn, lastName: ln, error: '' };
+    res.status(200).json(ret);
+});
+
 /* Gerber API calls here for reference
 
 app.post('/api/addcard', async (req, res, next) => {
