@@ -137,7 +137,7 @@ app.post('/api/login', async (req, res, next) => {
 });
 
 //Need to know if email is also given on login
-app.post('/api/createUser', async (req, res, next) => {
+app.post('/api/register', async (req, res, next) => {
     // incoming: new login, new password
     // outgoing: id, firstName, lastName, error
 
