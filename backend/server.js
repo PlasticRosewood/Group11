@@ -6,8 +6,7 @@ const app = express();
 
 const MongoClient = require('mongodb').MongoClient;
 
-//REPLACE WITH REAL MONGO URL
-const url = 'mongodb+srv://RickLeinecker:COP4331Rocks@cluster0-4pisv.mongodb.net/COP4331?retryWrites=true&w=majority';
+const url = 'mongodb+srv://express:6TAfFV0o9mTn31E4@peakorboo.w7oji.mongodb.net/?retryWrites=true&w=majority&appName=PeakOrBoo';
 
 const client = new MongoClient(url);
 client.connect();
@@ -159,29 +158,24 @@ app.post('/api/login', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-//Need to know if email is also given on login
+//Need to implement Passport
 app.post('/api/register', async (req, res, next) => {
-    // incoming: new login, new password
-    // outgoing: id, firstName, lastName, error
+    // incoming: new email, new login, new password
+    // outgoing: error
 
     var error = '';
 
-    const { login, password } = req.body;
+    const { email, login, password } = req.body;
 
-    const db = client.db();
-    const results = await db.collection('Users').insertOne({ Login: login, Password: password }).toArray();
-
-    var id = -1;
-    var fn = '';
-    var ln = '';
-
-    if (results.length > 0) {
-        id = results[0].UserId;
-        fn = results[0].FirstName;
-        ln = results[0].LastName;
+    try {
+        const db = client.db();
+        const result = db.collection('Users').insertOne({ Email: email, Login: login, Password: password });
+    }
+    catch (e) {
+        error = e.toString();
     }
 
-    var ret = { id: id, firstName: fn, lastName: ln, error: '' };
+    var ret = { error: error };
     res.status(200).json(ret);
 });
 
