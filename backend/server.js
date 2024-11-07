@@ -12,9 +12,39 @@ var MongoStore = require('connect-mongo');
 //REPLACE WITH REAL MONGO URL - Not sure which line is correct, Carson (commented) or Jason's 
 const url = process.env.DB_URL;
 //const url = 'mongodb+srv://express:6TAfFV0o9mTn31E4@peakorboo.w7oji.mongodb.net/?retryWrites=true&w=majority&appName=PeakOrBoo';
+const mongoose = require('mongoose');
+const passport = require('passport');
+const dotenv = require('dotenv');
+dotenv.config();
+
+/* Again, untested AI code, put here to look at later/with more eyes
+const express = require('express');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
+app.use(express.json());
 
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
+
+// Initialize Passport
+require('./config/passport')(passport);
+app.use(passport.initialize());
+
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+*/
+
+const LocalStrategy = require('passport-local').Strategy
 const MongoClient = require('mongodb').MongoClient;
 var MongoStore = require('connect-mongo');
 
@@ -156,17 +186,22 @@ app.post('/api/register', async (req, res, next) => {
 
     var error = '';
 
-    const { email, login, password } = req.body;
+    const { login, password } = req.body;
 
-    try {
-        const db = client.db();
-        const result = db.collection('Users').insertOne({ Email: email, Login: login, Password: password });
-    }
-    catch (e) {
-        error = e.toString();
+    const db = client.db();
+    const results = await db.collection('Users').insertOne({ Login: login, Password: password }).toArray();
+
+    var id = -1;
+    var fn = '';
+    var ln = '';
+
+    if (results.length > 0) {
+        id = results[0].UserId;
+        fn = results[0].FirstName;
+        ln = results[0].LastName;
     }
 
-    var ret = { error: error };
+    var ret = { id: id, firstName: fn, lastName: ln, error: '' };
     res.status(200).json(ret);
 });
 
