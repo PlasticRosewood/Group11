@@ -1,6 +1,37 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const dotenv = require('dotenv');
+dotenv.config();
+
+/* Again, untested AI code, put here to look at later/with more eyes
+const express = require('express');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const dotenv = require('dotenv');
+dotenv.config();
+
+const app = express();
+app.use(express.json());
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
+
+// Initialize Passport
+require('./config/passport')(passport);
+app.use(passport.initialize());
+
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+*/
 
 const app = express();
 
