@@ -1,0 +1,56 @@
+.three-boxes-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.box {
+    width: 300px;
+    height: 600px; 
+    background-color: rgb(143, 240, 211);
+    border: 2px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    transition: transform 0.3s ease-in-out;
+}
+
+.center-box {
+    transform: translateY(0); 
+    z-index: 5;
+    width:440px;
+   
+    animation: idleAnimation 2s ease-in-out infinite;
+}
+
+
+.left-box {
+    transform:  translateX(70%) translateY(20px);
+    
+}
+
+.right-box {
+    transform: translateX(-70%) translateY(20px); 
+    z-index: 3;
+}
+
+
+ @keyframes idleAnimation {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+} 
+
+.center-box:hover {
+    transform: scale(1.05);
+    animation: none;
+}
