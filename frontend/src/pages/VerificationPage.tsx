@@ -1,28 +1,15 @@
-import paper from '../assets/paper.png';
+import paper from '../assets/Paper.svg'; //Note: will create mail opening bg if time allows
+import './Verification.css';  
 
 function VerificationPage() {
-    return ( // setting the background image as the background page 
-        // NOTE: Image quality needs to be fixed 
+    return (
         <> 
-            <style>{`
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
-                html, body, #root {
-                    width: 100vw;
-                    height: 100vh;
-                    overflow: hidden;
-                }
-            `}</style>
-
             <div
-                style={{
+                style={{ //setting background to image
                     backgroundImage: `url(${paper})`,
-                    backgroundSize: 'cover',             
+                    backgroundSize: 'cover',              
                     backgroundPosition: 'center',         
-                    backgroundRepeat: 'no-repeat',       
+                    backgroundRepeat: 'no-repeat',        
                     position: 'fixed',                   
                     top: 0,
                     left: 0,
@@ -33,7 +20,9 @@ function VerificationPage() {
                     alignItems: 'center',
                 }}
             >
-                Hellooooooooooooooooooooooooooooooooooooo
+                <div className="verification-box"> 
+                    Email Verified
+                </div>
             </div>
         </>
     );
