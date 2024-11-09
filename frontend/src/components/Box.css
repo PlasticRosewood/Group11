@@ -1,0 +1,31 @@
+.box{ /*box dimensions*/
+    width:40%;
+    height:80%;
+    background-color: rgb(143, 240, 211);
+    border: 2px solid #333;
+    border-radius:8px;
+    box-shadow: 04px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5 rem;
+    font-weight:bold;
+    color: white; 
+
+    animation:idleAnimation 2s ease-in-out infinite;
+    transition:transform 0.3s ease-in-out;
+}
+
+@keyframes idleAnimation{ /* idling animation, might change hovering event*/
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.box:hover {
+    transform: scale(1.05) ;
+    animation: none;
+}

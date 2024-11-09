@@ -3,6 +3,7 @@ import './App.css';
 import LoginPage from './pages/LoginPage';
 import CategoriesPage from './pages/CategoriesPage';
 import VerificationPage from './pages/VerificationPage';
+import TestPage from './pages/TestPage';
 
 function App() {
 
@@ -12,7 +13,8 @@ function App() {
         <Routes>
           <Route path='/' element= {<CategoriesPage />} />
           <Route path='/login' element= {<LoginPage />} />
-          <Route path='/VerificationPage' element= {<VerificationPage />} />
+          <Route path='/verification' element= {<VerificationPage />} />
+          <Route path='/test' element= {<TestPage />} />
         </Routes>
       </Router>
     </>
