@@ -1,4 +1,4 @@
-import paper from '../../assets/paper.png';
+import paper from '../assets/paper.png';
 
 function VerificationPage() {
     return ( // setting the background image as the background page 
