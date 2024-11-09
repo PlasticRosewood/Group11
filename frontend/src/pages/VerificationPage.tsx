@@ -7,7 +7,7 @@ function VerificationPage() {
             <div
                 style={{ //setting background to image
                     backgroundImage: `url(${paper})`,
-                    backgroundSize: 'cover',              
+                    backgroundSize: '120% ',              
                     backgroundPosition: 'center',         
                     backgroundRepeat: 'no-repeat',        
                     position: 'fixed',                   
