@@ -1,13 +1,28 @@
-.three-boxes-container {
+.three-boxes-container {/* mainly position related styling but note the gap and ensure this is okay for different screen sizes */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    position: relative;
+    gap: 180%;
 }
 
+.scroll-button{ /* styling for scrolling boxes buttons */
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10;
+}
+
+
+.box-container {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+}
 .box {
     width: 300px;
-    height: 600px; 
+    height: 600px;
     background-color: rgb(143, 240, 211);
     border: 2px solid #333;
     border-radius: 8px;
@@ -18,28 +33,35 @@
     font-size: 1.5rem;
     font-weight: bold;
     color: white;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0.5;
+    position: absolute;
 }
 
-.center-box {
-    transform: translateY(0); 
+.center-box { /* showcase box (center) */
+    transform: translateX(0); 
     z-index: 5;
     width:440px;
+    opacity: 1;
    
     animation: idleAnimation 2s ease-in-out infinite;
 }
 
 
 .left-box {
-    transform:  translateX(70%) translateY(20px);
-    
-}
-
-.right-box {
-    transform: translateX(-70%) translateY(20px); 
+    transform:  translateX(-70%) translateY(20px);
     z-index: 3;
 }
 
+.right-box {
+    transform: translateX(70%) translateY(20px); 
+    z-index: 3;
+}
+
+.center-box:hover {
+    transform: scale(1.05);
+
+}
 
  @keyframes idleAnimation {
     0%, 100% {
@@ -49,8 +71,3 @@
         transform: translateY(-10px);
     }
 } 
-
-.center-box:hover {
-    transform: scale(1.05);
-    animation: none;
-}
