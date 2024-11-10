@@ -18,13 +18,13 @@ function ThreeBoxes() {
                 Back
             </button>
             <div className="box-container">
-                <div className={`box ${currIndex === 1 ? 'center-box' : currIndex === 2 ? 'right-box' : 'left-box'}`}>
+                <div className={`box ${currIndex === 1 ? 'center-box' : currIndex === 2 ? 'left-box' : 'right-box'}`}>
                     Box 1
                 </div>
-                <div className={`box ${currIndex === 2 ? 'center-box' : currIndex === 3 ? 'right-box' : 'left-box'}`}>
+                <div className={`box ${currIndex === 2 ? 'center-box' : currIndex === 3 ? 'left-box' : 'right-box'}`}>
                     Box 2
                 </div>
-                <div className={`box ${currIndex === 3 ? 'center-box' : currIndex === 1 ? 'right-box' : 'left-box'}`}>
+                <div className={`box ${currIndex === 3 ? 'center-box' : currIndex === 1 ? 'left-box' : 'right-box'}`}>
                     Box 3
                 </div>
             </div>
