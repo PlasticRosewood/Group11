@@ -1,26 +1,26 @@
-.three-boxes-container {/* mainly position related styling but note the gap and ensure this is okay for different screen sizes */
+.three-boxes-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     position: relative;
     gap: 180%;
-}
-
-.scroll-button{ /* styling for scrolling boxes buttons */
+  }
+  
+  .scroll-button { /* button styling */
     font-size: 1.5rem;
     cursor: pointer;
     z-index: 10;
-}
-
-
-.box-container {
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    position:relative;
-}
-.box {
+  }
+  
+  .box-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .box {
     width: 300px;
     height: 600px;
     background-color: rgb(143, 240, 211);
@@ -33,43 +33,50 @@
     font-size: 1.5rem;
     font-weight: bold;
     color: white;
-    transition: transform 0.3s ease-in-out;
     position: absolute;
-}
-
-.center-box { /* showcase box (center) */
-    transform: translateX(0); 
-    z-index: 5;
-    width:440px;
-    opacity: 1;
-   
-    animation: idleAnimation 2s ease-in-out infinite; /* NOTE FOR FUTURE: TAKING THIS OUT ALLOWS FOR SWITCHING ANIMATION */
-}
-
-
-.left-box,
-.right-box {
-    opacity: 0.7;
-}
-.left-box {
-    transform: translateX(-70%) translateY(20px);
+    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 0;
+  }
   
-}
-
-.right-box {
-    transform: translateX(70%) translateY(20px); 
-}
-
-.center-box:hover {
+  .center-box {
+    transform: translateX(0);
+    z-index: 5;
+    width: 440px;
+    opacity: 1;
+    animation: idleAnimation 2s ease-in-out infinite;
+  }
+  
+  .left-box,
+  .right-box {
+    opacity: 0.7;
+  }
+  
+  .left-box {
+    transform: translateX(-70%) translateY(20px);
+  }
+  
+  .right-box {
+    transform: translateX(70%) translateY(20px);
+  }
+  
+  
+  .center-box:hover {
     transform: scale(1.05);
     animation: none;
-}
-
- @keyframes idleAnimation {
+  }
+  
+ 
+  @keyframes idleAnimation {
     0%, 100% {
-        transform: translateY(0);
+      transform: translateY(0);
     }
     50% {
-        transform: translateY(-10px);
+      transform: translateY(-10px);
     }
-} 
+  }
+  
+ /* turning off idle animation */
+  .no-idle {
+    animation: none;
+  }
+  
