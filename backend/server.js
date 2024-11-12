@@ -105,34 +105,31 @@ passport.deserializeUser((id, done) => {
 
 //#region API Endpoints
 app.post("/api/signup", async (req, res, next) => {
+    //TODO (MAYBE) check if email is valid
+    //TODO fill out the rest of the user info as needed
     const coll = await dbclient.collection('Users');
     const hash = await argon2.hash(req.body.password); //salts automatically, default config is good
 
-    //Check if email or username already in use t
-    //TODO then store info into database
+    //Checks if email or username already in use 
+    //TODO then store info into database (not sure what this means in regards to a prexisting username - Carson)
     const query = await db.collections('Users').find({Username: user}).toArray()
     if(query != null)
     {
-        var ret = { error: 'Username already in use' };
-        res.status(409).json(ret);
+        res.status(409).json({message: 'Username already in use'});
     }
 
     query = await db.collections('Users').find({Email: email}).toArray()
     if(query != null)
     {
-        ret = { error: 'Email already in use' };
-        res.status(409).json(ret);
+        res.status(409).json({ message: 'Email already in use' });
     }
 
-    //Check if username is valid (just characters)
+    //Checks if username is valid (just characters)
     if(!(req.body.username.matches("[a-zA-Z]+")))
     {
-        var ret = { error: 'Invalid username' };
-        res.status(422).json(ret);
+        res.status(422).json({ message: 'Invalid username' });
     }
 
-    //TODO (MAYBE) check if email is valid
-    //TODO fill out the rest of the user info as needed
     const newUser = { Username: req.username, Email: req.email, Password_Hash: hash,
         Date_Created: Date.now()  };
     await coll.insertOne(newUser);
