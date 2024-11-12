@@ -9,7 +9,7 @@ const LocalStrategy = require('passport-local').Strategy
 const MongoClient = require('mongodb').MongoClient;
 var MongoStore = require('connect-mongo');
 
-//Not sure which line is correct, Carson (commented) or Jason's 
+//Not sure which line is correct, Carson's (commented) or Jason's 
 const url = process.env.DB_URL;
 //const url = 'mongodb+srv://express:6TAfFV0o9mTn31E4@peakorboo.w7oji.mongodb.net/?retryWrites=true&w=majority&appName=PeakOrBoo';
 const mongoose = require('mongoose');
@@ -58,6 +58,11 @@ authUser = async (user, password, done) => {
     //if user is not in db or password does not match, authenticated_user = false
     const result = await db.collections('Users').find({Username: user}).toArray()
     //todo do email check
+
+    if(result == null) {
+        //user not found in DB
+        return done (null, false);
+    }
 
     if(!(await argon2.verify(result[0].Password_Hash, password))){
         //passwords did not match
