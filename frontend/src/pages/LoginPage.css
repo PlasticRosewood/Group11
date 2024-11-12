@@ -1,0 +1,13 @@
+#newUserForm, #existingUserForm {
+    display: grid;
+    gap: 5px;
+    margin: 10px;
+
+    /* temporary sizing until we implement background images */
+    width: 350px;
+    height: 300px;
+}
+
+#newUserForm > * {
+    padding: 2px;
+}
