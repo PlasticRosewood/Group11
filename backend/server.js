@@ -167,6 +167,7 @@ app.post('/api/login', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+//#region Gerber API
 /* Gerber API calls here for reference
 
 app.post('/api/addcard', async (req, res, next) => {
@@ -214,7 +215,9 @@ app.post('/api/searchcards', async (req, res, next) => {
     res.status(200).json(ret);
 });
 */
+//#endregion
 
+//#region Game API
 // Update the Game Total (adjusted) Wins Value
 app.post('/api/updatetotalgamewins', async (req, res, next) => {
     // incoming: gameId, points
