@@ -13,7 +13,6 @@ var MongoStore = require('connect-mongo');
 const url = process.env.DB_URL;
 //const url = 'mongodb+srv://express:6TAfFV0o9mTn31E4@peakorboo.w7oji.mongodb.net/?retryWrites=true&w=majority&appName=PeakOrBoo';
 const mongoose = require('mongoose');
-const passport = require('passport');
 const dotenv = require('dotenv');
 dotenv.config();
 
