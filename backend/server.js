@@ -107,8 +107,30 @@ passport.deserializeUser((id, done) => {
 app.post("/api/signup", async (req, res, next) => {
     const coll = await dbclient.collection('Users');
     const hash = await argon2.hash(req.body.password); //salts automatically, default config is good
-    //TODO check if email or username already in use then store info into database
-    //TODO check if username is valid (just characters)
+
+    //Check if email or username already in use t
+    //TODO then store info into database
+    const query = await db.collections('Users').find({Username: user}).toArray()
+    if(query != null)
+    {
+        var ret = { error: 'Username already in use' };
+        res.status(409).json(ret);
+    }
+
+    query = await db.collections('Users').find({Email: email}).toArray()
+    if(query != null)
+    {
+        ret = { error: 'Email already in use' };
+        res.status(409).json(ret);
+    }
+
+    //Check if username is valid (just characters)
+    if(!(req.body.username.matches("[a-zA-Z]+")))
+    {
+        var ret = { error: 'Invalid username' };
+        res.status(422).json(ret);
+    }
+
     //TODO (MAYBE) check if email is valid
     //TODO fill out the rest of the user info as needed
     const newUser = { Username: req.username, Email: req.email, Password_Hash: hash,
