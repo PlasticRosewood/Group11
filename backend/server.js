@@ -218,5 +218,62 @@ app.post('/api/searchcards', async (req, res, next) => {
 });
 */
 
+// Update the Game Total (adjusted) Wins Value
+app.post('/api/updatetotalgamewins', async (req, res, next) => {
+    // incoming: gameId, points
+    // outgoing: error
+
+    var error = '';
+
+    const { gameId, points } = req.body;
+
+    try {
+    const db = client.db();
+    const result = await db.collection('Games').findOneAndUpdate(
+        { GameId: gameId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
+        { $inc: { TotalGameWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
+    )
+
+    res.status(200).json({
+        message: 'Game value updated successfully!',
+        game: result.TotalGameWins,
+    });
+}
+catch (e) {
+    res.status(500).json({ message: 'Error updating game value', error});   
+}
+
+});
+
+// Get the number of game wins from the database
+app.get('/api/TotalGameWins', async (req, res, next) => { //TODO CHANGE TOTALGAMEWINS WITH DATABASE FIELD
+    // incoming: gameId
+    // outgoing: TotalGameWins
+
+    const { gameId } = req.body;
+
+    try {
+        const db = client.db();
+        const results = await db.collection('Games').findOne({ gameId }, { projection: { TotalGameWins: 1 }});
+        
+        // Check if it was found
+        if (!results) {
+            return res.status(404).json({ message: 'Game not found!'});
+        }
+
+        res.status(200).json({
+            message: 'Game wins retrieved successfully',
+            TotalGameWins: results.TotalGameWins || 0,
+        });
+    }
+
+    catch (error) {
+        res.status(500).json({ message: 'Error retrieving game wins', error});
+    }
+    
+});
+
+
+
 //#endregion
 app.listen(5000); // start Node + Express server on port 5000
