@@ -5,7 +5,9 @@ import ThreeBox from '../components/ThreeBox.tsx';
 function TestPage() {
     return(
         
-           <ThreeBox />
+       <div>
+        
+       </div>
         
     );
 }
