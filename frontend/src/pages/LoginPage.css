@@ -1,13 +1,104 @@
 #newUserForm, #existingUserForm {
-    display: grid;
-    gap: 5px;
-    margin: 10px;
-
+    display: flex;
+    flex-direction: column;
+    gap:35%;
+    align-items: center;
     /* temporary sizing until we implement background images */
-    width: 350px;
-    height: 300px;
+    width: 250%;
+    height: 100%;;
+
+    
 }
 
-#newUserForm > * {
-    padding: 2px;
+#buttonContainer{ /* for new user and existing user */
+    display:flex;
+    flex-direction: column;
+    margin-top: 107%;
+    gap:190px;
 }
+#buttonContainer > button {
+    padding: 15px 100px;
+    font-size:20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+#buttonContainer > button:hover {
+    background-color: cyan;
+    transform: scale(1.2);
+}
+#buttonContainer > button:active {
+    transform: scale(0.95);
+}
+#newUserForm > *,  #existingUserForm > *{
+    padding: 10px;
+    width:100%;
+    font-size: 16px;
+    box-sizing: border-box;
+    position: relative;
+    right: 29%;
+}
+
+#loginSignupBox{
+    position: relative;
+    left: 28%;
+    bottom:25%;
+}
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('../assets/LoginBG.svg');
+    background-size: 105% ;
+    background-position:  center;
+    background-repeat: no-repeat;
+    position:fixed;
+    top:0;
+    left:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.titre{ /* peak or boo sizing */
+    position: fixed;
+    right: 57%;
+    top: 30%;
+    font-size:1000%;
+
+}
+/* positioning hell */
+/* note, positioning might be screwed for different devices and still needs to be made responsive. (looks good on my device though...) */
+#newUserName, #existingUserName{
+    margin-top: 7%;
+} 
+#existingUserName{
+    margin-top: 19%;
+}
+#existingUserPassword{
+    margin-top: 1%;
+}
+#newUserEmail{
+    margin-top: 1%;
+}
+#newUserPassword{
+    margin-top: 1%;
+}
+#authTitle{
+    
+    font-size: 300%;
+}
+#back{
+    position: absolute;
+    left:-70%;
+    bottom:78%;
+}
+@keyframes idleAnimation{
+    0%, 100% {
+        transform: rotate(-4deg) translateY(0);
+    }
+    50% {
+        transform: rotate(-4deg) translateY(-20px);
+    }
+}
+

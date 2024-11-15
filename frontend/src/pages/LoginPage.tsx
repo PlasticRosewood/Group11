@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
+import LoginBg from '../assets/LoginBg.svg';
+import Title from '../components/Title.tsx'; 
 
 function LoginPage() {
   // hooks into login data
@@ -10,17 +12,24 @@ function LoginPage() {
   // hook into style data
   const [signUpVisible, setSignUpVisible] = useState(false);
   const [logInVisible, setLogInVisible] = useState(false);
+  const[pageTitle, setPageTitle] = useState('');
+  const[showOptions, setShowOptions] = useState(true);
 
   function showSignUp() : void
   {
     setSignUpVisible(true);
     setLogInVisible(false);
+    setPageTitle('Register');
+    setShowOptions(false);
   }
 
   function showLogIn() : void
   {
     setSignUpVisible(false);
     setLogInVisible(true);
+    setPageTitle('Login');
+    setShowOptions(false);
+
   }
 
   // signup function
@@ -52,12 +61,33 @@ function LoginPage() {
   {
     return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
   }
+  function back() {
+    setShowOptions(true);
+    setSignUpVisible(false);
+    setLogInVisible(false);
+    setPageTitle('');
+  }
 
   return (
     <>
+    <div className="background">
+      <Title className="titre" />
     <div id="loginSignupBox">
-      <button id="openNewUser" onClick={showSignUp}>New User</button>
-      <button id="openExistingUser" onClick={showLogIn}>Existing User</button>
+      <div className="header">
+
+        {!showOptions && <button id="back" onClick={back}>Back</button>}
+        {pageTitle && <h2 id="authTitle">{pageTitle}</h2>}
+      </div>
+
+      {showOptions ? (
+
+        <div id="buttonContainer">
+          <button id="openNewUser" onClick={showSignUp}>New User</button>
+          <button id="openExistingUser" onClick={showLogIn}>Existing User</button>
+        </ div>
+      ) : (
+        <div></div>
+      )}
 
       <div id="newUserForm" style={{ display: signUpVisible ? 'grid' : 'none' }}>
         <input type="text" id="newUserName" placeholder="Username" onChange={e => setUserName(e.target.value)} />
@@ -75,6 +105,7 @@ function LoginPage() {
         <button id="logIn" onClick={logIn}>Log In</button>
       </div>      
     </div>
+  </div>
     </>
   )
 }
