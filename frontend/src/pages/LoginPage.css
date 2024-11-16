@@ -65,6 +65,7 @@
     right: 57%;
     top: 30%;
     font-size:1000%;
+    transform: rotate(-5deg);
 
 }
 /* positioning hell */
@@ -101,4 +102,3 @@
         transform: rotate(-4deg) translateY(-20px);
     }
 }
-

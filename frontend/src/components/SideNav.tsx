@@ -1,5 +1,7 @@
 import './SideNav.css';
 import React, {useState} from 'react';
+import Title from './Title.tsx';
+import { Link } from 'react-router-dom';
 
 /* binder tab stying??? */
 interface SideNavProps{ /* defining the type of prop */
@@ -21,12 +23,26 @@ function SideNav ({ onToggle } : SideNavProps) {
             </button>
             {isExpanded && (
             <div className="nav-content show">    
-                <h2 className="nav-title">PeakorBoo</h2>
+                <Title className="sideTitle" />
                 <ul className="nav-list">
-                    <li>Home</li>
-                    <li>Profile</li>
-                    <li>LeaderBoard</li>
-                    <li className="auth">Signup/Login : Sign Out</li> {/* depending on authentication */}
+                    <li>
+                        <Link to="/">Home</Link>
+                    </li>
+                    <li>
+                        <Link to="/profile">
+                            Profile
+                            </Link>
+                    </li>
+                    <li>
+                        <Link to="/leaderboard">
+                        LeaderBoard
+                        </Link>
+                    </li>
+                    <li className="auth">
+                        <Link to="/login">
+                        Signup/Login : Sign Out
+                        </Link>
+                    </li> {/* depending on authentication */}
                 </ul>
             </div>
             )}

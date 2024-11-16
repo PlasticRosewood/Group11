@@ -71,7 +71,9 @@ function LoginPage() {
   return (
     <>
     <div className="background">
-      <Title className="titre" />
+      <div className="roations">
+        <Title className="titre" />
+      </div>
     <div id="loginSignupBox">
       <div className="header">
 

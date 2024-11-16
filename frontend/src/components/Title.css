@@ -1,7 +1,7 @@
 .stacked-text{
     font-family: 'Oi', sans-serif; /* font up for change */
     font-size:100%;
-    
+    color: rgb(32, 124, 230);
     text-shadow: 
     2px 2px 4px rgba(255, 0, 0, 0.8), 
     -2px -2px 4px rgba(0, 255, 0, 0.8),   
@@ -12,9 +12,7 @@
 
 }
 
-.rotate{ 
-  transform: rotate(-5deg);
-}
+
 
 @keyframes idleAnimation {
   0%, 100% {
