@@ -100,7 +100,16 @@ app.post('/api/searchcards', async (req, res, next) => {
 //#endregion
 
 //#region Game API
+
+
+
 // Update the Game Total (adjusted) Wins Value
+/* My Proposed Schema:
+{
+    "GameId": "game_uuid",
+    "TotalGameWins": 5
+}
+*/
 app.post('/api/updatetotalgamewins', async (req, res, next) => {
     // incoming: gameId, points
     // outgoing: error
@@ -127,16 +136,23 @@ catch (e) {
 
 });
 
-// Get the number of game wins from the database
-app.get('/api/TotalGameWins', async (req, res, next) => { //TODO CHANGE TOTALGAMEWINS WITH DATABASE FIELD
+
+// Get the number of total game wins from the database
+app.get('/api/totalgamewins', async (req, res, next) => { //TODO CHANGE TOTALGAMEWINS WITH DATABASE FIELD
     // incoming: gameId
     // outgoing: TotalGameWins
 
-    const { gameId } = req.body;
+    const { gameId } = req.query;
+
+    if (!gameId) {
+        return res.status(400).json({ message: 'Game ID is required.' });
+    }
 
     try {
         //const db = client.db();
-        const results = await db.collection('Games').findOne({ gameId }, { projection: { TotalGameWins: 1 }});
+        const results = await db.collection('Games').findOne(
+            { gameId }, 
+            { projection: { TotalGameWins: 1 }});
         
         // Check if it was found
         if (!results) {
@@ -155,6 +171,80 @@ app.get('/api/TotalGameWins', async (req, res, next) => { //TODO CHANGE TOTALGAM
     
 });
 
+// Update the Game Wins Value FOR THE SPECIFIC USER
+// imo, this should be a separate collection than Games, so we don't need to assign total a uuid
+/* My Proposed Schema for UserScores:
+{
+    "UserId": "user_uuid",
+    "scores": {
+        "gameId_1": 5,
+        "gameId_2": 3
+    }
+}
+*/
+app.post('/api/updateusergamewins', async (req, res, next) => {
+    // incoming: gameId, userId, points
+    // outgoing: error
+
+    var error = '';
+
+    const { gameId, userId, points } = req.body;
+
+    try {
+    //const db = db.client.db();
+    const result = await db.collection('UserScores').findOneAndUpdate(
+        { UserId: userId }, 
+        { $inc: { ['scores.${gameId}']: points } } 
+    )
+
+    res.status(200).json({
+        message: 'User game value updated successfully!',
+        game: result.UserGameWins,
+    });
+}
+catch (e) {
+    res.status(500).json({ message: 'Error updating user game value', error});   
+}
+
+});
+
+// Get the number of game wins for a specific user
+app.get('/api/usergamewins', async (req, res, next) => {
+    // incoming: gameId, userId
+    // outgoing: UserGameWins
+
+    const { gameId, userId } = req.query;
+
+    if (!gameId) {
+        return res.status(400).json({ message: 'Game ID is required.' });
+    }
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required.' });
+    }
+
+    try {
+        //const db = client.db();
+        const results = await db.collection('UserScores').findOne(
+            { UserId: userId }, 
+            { projection: { ['scores.${gameId}']: 1 }});
+        
+        // Check if it was found
+        if (!results) {
+            return res.status(404).json({ message: 'User not found!'});
+        }
+
+        res.status(200).json({
+            message: 'User wins retrieved successfully',
+            UserGameWins: results.UserGameWins || 0,
+        });
+    }
+
+    catch (error) {
+        res.status(500).json({ message: 'Error retrieving user wins', error});
+    }
+    
+});
 
 
 //#endregion
