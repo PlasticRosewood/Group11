@@ -1,38 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const argon2 = require('argon2');
 const passport = require('passport');
 const session = require('express-session');
 
-const LocalStrategy = require('passport-local').Strategy
-const MongoClient = require('mongodb').MongoClient;
 var MongoStore = require('connect-mongo');
-
-//Not sure which line is correct, Carson's (commented) or Jason's 
-const url = process.env.DB_URL;
-//const url = 'mongodb+srv://express:6TAfFV0o9mTn31E4@peakorboo.w7oji.mongodb.net/?retryWrites=true&w=majority&appName=PeakOrBoo';
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-dotenv.config();
+const db = require('./database');
 
 const app = express();
-const dbclient = new MongoClient(url);
-dbclient.connect();
 
-//#region app.use setups
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    store: MongoStore.create({
-        dbclient,
-        dbName: 'Sessions'
-    })
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
+const authRouter = require('./auth');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -49,122 +26,28 @@ app.use((req, res, next) => {
     );
     next();
 });
-//#endregion
 
-//#region Functions
-authUser = async (user, password, done) => {
-    //TODO auth user
-    //if user is not in db or password does not match, authenticated_user = false
-    const result = await db.collections('Users').find({Username: user}).toArray()
-    //todo do email check
-
-    if(result == null) {
-        //user not found in DB
-        return done (null, false);
-    }
-
-    if(!(await argon2.verify(result[0].Password_Hash, password))){
-        //passwords did not match
-        return done (null, false);
-    }
-
-    //package up authenticated user info
-    let authenticated_user = {id: result[0]._id, name: "cringe"};
-    return done (null, authenticated_user);
-}
-
-//redirects away from protected pages, if logged out
-checkAuthenticated = async (req, res, next) => {
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect("/login");
-}
-
-//used to redirect from the login page to the normal pages, if logged in
-checkLoggedIn = async (req, res, next) => {
-    if(req.isAuthenticated()){
-        return res.redirect('/dashboard');
-    }
-    next();
-}
-//#endregion
-
-//#region passport setup
-passport.use(new LocalStrategy(authUser));
-
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-})
-
-passport.deserializeUser((id, done) => {
-    done(null, user);
-})
-//#endregion
-
-//#region API Endpoints
-app.post("/api/signup", async (req, res, next) => {
-    //TODO (MAYBE) check if email is valid
-    //TODO fill out the rest of the user info as needed
-    const coll = await dbclient.collection('Users');
-    const hash = await argon2.hash(req.body.password); //salts automatically, default config is good
-
-    //Checks if email or username already in use 
-    //TODO then store info into database (not sure what this means in regards to a prexisting username - Carson)
-    const query = await db.collections('Users').find({Username: user}).toArray()
-    if(query != null)
-    {
-        res.status(409).json({message: 'Username already in use'});
-    }
-
-    query = await db.collections('Users').find({Email: email}).toArray()
-    if(query != null)
-    {
-        res.status(409).json({ message: 'Email already in use' });
-    }
-
-    //Checks if username is valid (just characters)
-    if(!(req.body.username.matches("[a-zA-Z]+")))
-    {
-        res.status(422).json({ message: 'Invalid username' });
-    }
-
-    const newUser = { Username: req.username, Email: req.email, Password_Hash: hash,
-        Date_Created: Date.now()  };
-    await coll.insertOne(newUser);
-});
-
-app.post("/api/login", passport.authenticate('local',{
-    successRedirect: '/dashboard',
-    failureRedirect: '/login'
+//#region app.use setups
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'secret',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+        client: db.dbclient,
+        dbName: 'Sessions'
+    })
 }));
 
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+//#endregion
+
+app.use('/', authRouter);
+
+
 //TODO logout stuff, needs to use req.logout()
-//Need to know if email is also given on login
-app.post('/api/login', async (req, res, next) => {
-    // incoming: login, password
-    // outgoing: id, firstName, lastName, error
-
-    var error = '';
-
-    const { login, password } = req.body;
-
-    const db = client.db();
-    const results = await db.collection('Users').find({ Login: login, Password: password }).toArray();
-
-    var id = -1;
-    var fn = '';
-    var ln = '';
-
-    if (results.length > 0) {
-        id = results[0].UserId;
-        fn = results[0].FirstName;
-        ln = results[0].LastName;
-    }
-
-    var ret = { id: id, firstName: fn, lastName: ln, error: '' };
-    res.status(200).json(ret);
-});
 
 //#region Gerber API
 /* Gerber API calls here for reference
@@ -227,7 +110,7 @@ app.post('/api/updatetotalgamewins', async (req, res, next) => {
     const { gameId, points } = req.body;
 
     try {
-    const db = client.db();
+    //const db = db.client.db();
     const result = await db.collection('Games').findOneAndUpdate(
         { GameId: gameId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
         { $inc: { TotalGameWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
@@ -252,7 +135,7 @@ app.get('/api/TotalGameWins', async (req, res, next) => { //TODO CHANGE TOTALGAM
     const { gameId } = req.body;
 
     try {
-        const db = client.db();
+        //const db = client.db();
         const results = await db.collection('Games').findOne({ gameId }, { projection: { TotalGameWins: 1 }});
         
         // Check if it was found
