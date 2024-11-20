@@ -119,20 +119,20 @@ app.post('/api/updatetotalgamewins', async (req, res, next) => {
     const { gameId, points } = req.body;
 
     try {
-    //const db = db.client.db();
-    const result = await db.collection('Games').findOneAndUpdate(
-        { GameId: gameId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
-        { $inc: { TotalGameWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
-    )
+        const result = await db.gamesDB.collection('Games').findOneAndUpdate(
+            { GameId: gameId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
+            { $inc: { TotalGameWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
+        )
 
-    res.status(200).json({
-        message: 'Game value updated successfully!',
-        game: result.TotalGameWins,
-    });
-}
-catch (e) {
-    res.status(500).json({ message: 'Error updating game value', error});   
-}
+        res.status(200).json({
+            message: 'Game value updated successfully!',
+            game: result.TotalGameWins,
+        });
+    }
+
+    catch (e) {
+        res.status(500).json({ message: 'Error updating game value', error});   
+    }
 
 });
 
@@ -149,8 +149,7 @@ app.get('/api/totalgamewins', async (req, res, next) => { //TODO CHANGE TOTALGAM
     }
 
     try {
-        //const db = client.db();
-        const results = await db.collection('Games').findOne(
+        const results = await db.gamesDB.collection('Games').findOne(
             { gameId }, 
             { projection: { TotalGameWins: 1 }});
         
@@ -191,20 +190,19 @@ app.post('/api/updateusergamewins', async (req, res, next) => {
     const { gameId, userId, points } = req.body;
 
     try {
-    //const db = db.client.db();
-    const result = await db.collection('UserScores').findOneAndUpdate(
-        { UserId: userId }, 
-        { $inc: { ['scores.${gameId}']: points } } 
-    )
+        const result = await db.usersDB.collection('UserScores').findOneAndUpdate(
+            { UserId: userId }, 
+            { $inc: { ['scores.${gameId}']: points }});
 
-    res.status(200).json({
-        message: 'User game value updated successfully!',
-        game: result.UserGameWins,
-    });
-}
-catch (e) {
-    res.status(500).json({ message: 'Error updating user game value', error});   
-}
+        res.status(200).json({
+            message: 'User game value updated successfully!',
+            game: result.UserGameWins,
+        });
+    }
+
+    catch (error) {
+        res.status(500).json({ message: 'Error updating user game value', error});   
+    }
 
 });
 
@@ -224,8 +222,7 @@ app.get('/api/usergamewins', async (req, res, next) => {
     }
 
     try {
-        //const db = client.db();
-        const results = await db.collection('UserScores').findOne(
+        const results = await db.usersDB.collection('UserScores').findOne(
             { UserId: userId }, 
             { projection: { ['scores.${gameId}']: 1 }});
         
@@ -253,10 +250,14 @@ app.get('/api/searchgames', async (req, res, next) => {
 
     const { search } = req.body;
 
+    if(!search) {
+        return res.status(400).json({ message: 'Searched name is required.' });
+    }
+
     var _search = search.trim();
 
     try {
-        const results = await db.collection('Games').find({ "Game": { $regex: _search + '.*' } }).toArray();
+        const results = await db.gamesDB.collection('Games').find({ "Game": { $regex: _search + '.*' } }).toArray();
         
         //Stores found games in an array
         var ret = [];
@@ -278,11 +279,15 @@ app.get('/api/searchmovies', async (req, res, next) => {
     // outgoing: results[], error
 
     const { search } = req.body;
+    
+    if(!search) {
+        return res.status(400).json({ message: 'Searched name is required.' });
+    }
 
     var _search = search.trim();
 
     try {
-        const results = await db.collection('Movies').find({ "Movie": { $regex: _search + '.*' } }).toArray();
+        const results = await db.moviesDB.collection('Movies').find({ "Movie": { $regex: _search + '.*' } }).toArray();
         
         //Stores found movies in an array
         var ret = [];
