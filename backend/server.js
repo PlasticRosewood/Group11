@@ -247,7 +247,7 @@ app.get('/api/usergamewins', async (req, res, next) => {
 });
 
 // Get the searched game from the list of games
-app.post('/api/searchgames', async (req, res, next) => {
+app.get('/api/searchgames', async (req, res, next) => {
     // incoming: search
     // outgoing: results[], error
 
@@ -273,7 +273,7 @@ app.post('/api/searchgames', async (req, res, next) => {
 });
 
 // Get the searched movie from the list of movies
-app.post('/api/searchmovies', async (req, res, next) => {
+app.get('/api/searchmovies', async (req, res, next) => {
     // incoming: search
     // outgoing: results[], error
 
