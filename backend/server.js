@@ -303,6 +303,129 @@ app.get('/api/searchmovies', async (req, res, next) => {
     }
 });
 
+app.post('/api/updatetotalmoviewins', async (req, res, next) => {
+    // incoming: movieId, points
+    // outgoing: error
+
+    var error = '';
+
+    const { movieId, points } = req.body;
+
+    try {
+        const result = await db.moviesDB.collection('Movies').findOneAndUpdate(
+            { MovieId: movieId },
+            { $inc: { TotalMovieWins: points } } 
+        )
+
+        res.status(200).json({
+            message: 'Movie value updated successfully!',
+            movie: result.TotalMovieWins,
+        });
+    }
+
+    catch (e) {
+        res.status(500).json({ message: 'Error updating movie value', error});   
+    }
+
+});
+
+
+// Get the number of total movie wins from the database
+app.get('/api/totalmoviewins', async (req, res, next) => {
+    // incoming: movieId
+    // outgoing: TotalMovieWins
+
+    const { movieId } = req.query;
+
+    if (!movieId) {
+        return res.status(400).json({ message: 'Movie ID is required.' });
+    }
+
+    try {
+        const results = await db.moviesDB.collection('Movies').findOne(
+            { gameId }, 
+            { projection: { TotalMovieWins: 1 }});
+        
+        // Check if it was found
+        if (!results) {
+            return res.status(404).json({ message: 'Movie not found!'});
+        }
+
+        res.status(200).json({
+            message: 'Movie wins retrieved successfully',
+            TotalMovieWins: results.TotalMovieWins || 0,
+        });
+    }
+
+    catch (error) {
+        res.status(500).json({ message: 'Error retrieving movie wins', error});
+    }
+    
+});
+
+
+app.post('/api/updateusermoviewins', async (req, res, next) => {
+    // incoming: movieId, userId, points
+    // outgoing: error
+
+    var error = '';
+
+    const { movieId, userId, points } = req.body;
+
+    try {
+        const result = await db.usersDB.collection('UserScores').findOneAndUpdate(
+            { UserId: userId }, 
+            { $inc: { ['scores.${movieId}']: points }});
+
+        res.status(200).json({
+            message: 'User movie value updated successfully!',
+            game: result.UserMovieWins,
+        });
+    }
+
+    catch (error) {
+        res.status(500).json({ message: 'Error updating user movie value', error});   
+    }
+
+});
+
+// Get the number of movie wins for a specific user
+app.get('/api/usermoviewins', async (req, res, next) => {
+    // incoming: movieId, userId
+    // outgoing: UserMovieWins
+
+    const { movieId, userId } = req.query;
+
+    if (!movieId) {
+        return res.status(400).json({ message: 'Movie ID is required.' });
+    }
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required.' });
+    }
+
+    try {
+        const results = await db.usersDB.collection('UserScores').findOne(
+            { UserId: userId }, 
+            { projection: { ['scores.${movieId}']: 1 }});
+        
+        // Check if it was found
+        if (!results) {
+            return res.status(404).json({ message: 'User not found!'});
+        }
+
+        res.status(200).json({
+            message: 'User wins retrieved successfully',
+            UserMovieWins: results.UserMovieWins || 0,
+        });
+    }
+
+    catch (error) {
+        res.status(500).json({ message: 'Error retrieving user movie wins', error});
+    }
+    
+});
+
 
 //#endregion
 app.listen(5000); // start Node + Express server on port 5000
