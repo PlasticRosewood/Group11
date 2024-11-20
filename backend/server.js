@@ -246,6 +246,58 @@ app.get('/api/usergamewins', async (req, res, next) => {
     
 });
 
+// Get the searched game from the list of games
+app.post('/api/searchgames', async (req, res, next) => {
+    // incoming: search
+    // outgoing: results[], error
+
+    const { search } = req.body;
+
+    var _search = search.trim();
+
+    try {
+        const results = await db.collection('Games').find({ "Game": { $regex: _search + '.*' } }).toArray();
+        
+        //Stores found games in an array
+        var ret = [];
+        for (var i = 0; i < results.length; i++) {
+            ret.push(results[i].Game);
+        }
+
+        return res.status(200).json({ results: ret, message: 'Game(s) found successfully' });
+    }
+
+    catch (error) {
+        res.status(500).json({ message: 'Error retrieving searched game', error});
+    }
+});
+
+// Get the searched movie from the list of movies
+app.post('/api/searchmovies', async (req, res, next) => {
+    // incoming: search
+    // outgoing: results[], error
+
+    const { search } = req.body;
+
+    var _search = search.trim();
+
+    try {
+        const results = await db.collection('Movies').find({ "Movie": { $regex: _search + '.*' } }).toArray();
+        
+        //Stores found movies in an array
+        var ret = [];
+        for (var i = 0; i < results.length; i++) {
+            ret.push(results[i].Movie);
+        }
+
+        return res.status(200).json({ results: ret, message: 'Movie(s) found successfully' });
+    }
+
+    catch (error) {
+        res.status(500).json({ message: 'Error retrieving searched movie', error});
+    }
+});
+
 
 //#endregion
 app.listen(5000); // start Node + Express server on port 5000
