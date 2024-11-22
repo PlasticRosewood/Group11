@@ -257,10 +257,10 @@ app.get('/api/searchgames', async (req, res, next) => {
     var _search = search.trim();
 
     try {
-        const results = await db.gamesDB.collection('Games').find({ "Game": { $regex: _search + '.*' } }).toArray();
+        const results = await db.gamesDB.find({ "Game": { $regex: _search + '.*' } }).toArray();
         
         //Stores found games in an array
-        var ret = [];
+        var ret = results;
         for (var i = 0; i < results.length; i++) {
             ret.push(results[i].Game);
         }
@@ -268,7 +268,8 @@ app.get('/api/searchgames', async (req, res, next) => {
         return res.status(200).json({ results: ret, message: 'Game(s) found successfully' });
     }
 
-    catch (error) {
+    catch (e) {
+        error = e.toString();
         res.status(500).json({ message: 'Error retrieving searched game', error});
     }
 });
