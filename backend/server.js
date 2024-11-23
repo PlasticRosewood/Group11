@@ -205,44 +205,6 @@ app.post('/api/updateusergamewins', async (req, res, next) => {
 
 });
 
-// Get the number of game wins for a specific user
-app.get('/api/usergamewins', async (req, res, next) => {
-    // incoming: gameId, userId
-    // outgoing: UserGameWins
-
-    const { gameId, userId } = req.query;
-
-    if (!gameId) {
-        return res.status(400).json({ message: 'Game ID is required.' });
-    }
-
-    if (!userId) {
-        return res.status(400).json({ message: 'User ID is required.' });
-    }
-
-    try {
-        const results = await db.usersDB.findOne(
-            { UserId: userId }, 
-            { projection: { ['scores.${gameId}']: 1 }});
-        
-        // Check if it was found
-        if (!results) {
-            return res.status(404).json({ message: 'User not found!'});
-        }
-
-        res.status(200).json({
-            message: 'User wins retrieved successfully',
-            UserGameWins: results.UserGameWins || 0,
-        });
-    }
-
-    catch (e) {
-        error = e.toString();
-        res.status(500).json({ message: 'Error retrieving user wins', error});
-    }
-    
-});
-
 //#endregion
 
 //#region Movie API
@@ -332,94 +294,87 @@ app.post('/api/updateusermoviewins', async (req, res, next) => {
 
 });
 
-// Get the number of movie wins for a specific user
-app.get('/api/usermoviewins', async (req, res, next) => {
-    // incoming: movieId, userId
-    // outgoing: UserMovieWins
+//#endregion
 
-    const { movieId, userId } = req.query;
+//#region REFACTOR
 
-    if (!movieId) {
-        return res.status(400).json({ message: 'Movie ID is required.' });
+//Get the searched item from the given genre
+app.get('/api/searchItem', async (req, res, next) => { //TODO: TEST FOR MULTIPLE MATCHES
+    // incoming: search, genre
+    // outgoing: message, results[] || message, error
+
+    const { search , genre} = req.body;
+    var error = '';
+
+    if(!search) {
+        return res.status(400).json({ message: 'Searched name is required.', error });
+    }
+
+    if(genre != "Game" && genre != "Movie") {
+        return res.status(400).json({ message: 'Enter a valid genre.', error });
+    }
+
+    var _search = search.trim();
+
+    try {
+        if(genre == "Game")
+        {
+            results = await db.gamesDB.find({ "Game": { $regex: _search + '.*' } }).toArray();
+            return res.status(200).json({ message: 'Game(s) found successfully', results });
+        }
+        else
+        {
+            results = await db.moviesDB.find({ "Movie": { $regex: _search + '.*' } }).toArray();
+            return res.status(200).json({ message: 'Movie(s) found successfully', results });
+        }
+    }
+
+    catch (e) {
+        error = e.toString();
+        res.status(500).json({ message: 'Error retrieving searched item', error});
+    }
+});
+
+// Get the number of wins for a specific item for a specific user
+app.get('/api/userItemWins', async (req, res, next) => {
+    // incoming: itemId, userId, genre
+    // outgoing: message, userItemWins || message, error
+
+    const { itemId, userId, genre } = req.body;
+    var error = '';
+
+    if (!itemId) {
+        return res.status(400).json({ message: 'Item ID is required.', error });
     }
 
     if (!userId) {
-        return res.status(400).json({ message: 'User ID is required.' });
+        return res.status(400).json({ message: 'User ID is required.', error });
+    }
+
+    if(genre != "Game" && genre != "Movie") {
+        return res.status(400).json({ message: 'Enter a valid genre.', error });
     }
 
     try {
-        const results = await db.usersDB.findOne(
-            { UserId: userId }, 
-            { projection: { ['scores.${movieId}']: 1 }});
+        //Not sure if this call works as intended, testing needed
+        const results = await db.usersDB.findOne({ UserId: userId }, { projection: { ['scores.${itemId}']: 1 }});
         
         // Check if it was found
         if (!results) {
-            return res.status(404).json({ message: 'User not found!'});
+            return res.status(404).json({ message: 'Results not found!'});
         }
 
         res.status(200).json({
-            message: 'User wins retrieved successfully',
-            UserMovieWins: results.UserMovieWins || 0,
+            message: 'User item wins retrieved successfully',
+            userItemWins: results.userItemWins || 0 //Also not confident about here, depends on DB
         });
     }
 
     catch (e) {
         error = e.toString();
-        res.status(500).json({ message: 'Error retrieving user movie wins', error});
+        res.status(500).json({ message: 'Error retrieving user item wins', error});
     }
     
-});
-
-//#endregion
-
-//#region Search API
-
-// Get the searched game from the list of games
-app.get('/api/searchgames', async (req, res, next) => {
-    // incoming: search
-    // outgoing: results[], error
-
-    const { search } = req.body;
-
-    if(!search) {
-        return res.status(400).json({ message: 'Searched name is required.' });
-    }
-
-    var _search = search.trim();
-
-    try {
-        const results = await db.gamesDB.find({ "Game": { $regex: _search + '.*' } }).toArray();
-        return res.status(200).json({ results, message: 'Game(s) found successfully' });
-    }
-
-    catch (e) {
-        error = e.toString();
-        res.status(500).json({ message: 'Error retrieving searched game', error});
-    }
-});
-
-// Get the searched movie from the list of movies
-app.get('/api/searchmovies', async (req, res, next) => {
-    // incoming: search
-    // outgoing: results[], error
-
-    const { search } = req.body;
-    
-    if(!search) {
-        return res.status(400).json({ message: 'Searched name is required.' });
-    }
-
-    var _search = search.trim();
-
-    try {
-        const results = await db.moviesDB.find({ "Movie": { $regex: _search + '.*' } }).toArray();
-        return res.status(200).json({ results, message: 'Movie(s) found successfully' });
-    }
-
-    catch (e) {
-        error = e.toString();
-        res.status(500).json({ message: 'Error retrieving searched movie', error});
-    }
 });
 
 //#endregion
