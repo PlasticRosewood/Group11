@@ -99,9 +99,7 @@ app.post('/api/searchcards', async (req, res, next) => {
 */
 //#endregion
 
-//#region Game API
-
-
+//#region Tunarice Notes
 
 // Update the Game Total (adjusted) Wins Value
 /* My Proposed Schema:
@@ -110,65 +108,6 @@ app.post('/api/searchcards', async (req, res, next) => {
     "TotalGameWins": 5
 }
 */
-app.post('/api/updatetotalgamewins', async (req, res, next) => {
-    // incoming: gameId, points
-    // outgoing: error
-
-    const { gameId, points } = req.body;
-
-    try {
-        const result = await db.gamesDB.findOneAndUpdate(
-            { GameId: gameId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
-            { $inc: { TotalGameWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
-        )
-
-        res.status(200).json({
-            message: 'Game value updated successfully!',
-            game: result.TotalGameWins,
-        });
-    }
-
-    catch (e) {
-        error = e.toString();
-        res.status(500).json({ message: 'Error updating game value', error});   
-    }
-
-});
-
-
-// Get the number of total game wins from the database
-app.get('/api/totalgamewins', async (req, res, next) => { //TODO CHANGE TOTALGAMEWINS WITH DATABASE FIELD
-    // incoming: gameId
-    // outgoing: TotalGameWins
-
-    const { gameId } = req.query;
-
-    if (!gameId) {
-        return res.status(400).json({ message: 'Game ID is required.' });
-    }
-
-    try {
-        const results = await db.gamesDB.findOne(
-            { gameId }, 
-            { projection: { TotalGameWins: 1 }});
-        
-        // Check if it was found
-        if (!results) {
-            return res.status(404).json({ message: 'Game not found!'});
-        }
-
-        res.status(200).json({
-            message: 'Game wins retrieved successfully',
-            TotalGameWins: results.TotalGameWins || 0,
-        });
-    }
-
-    catch (e) {
-        error = e.toString();
-        res.status(500).json({ message: 'Error retrieving game wins', error});
-    }
-    
-});
 
 // Update the Game Wins Value FOR THE SPECIFIC USER
 // imo, this should be a separate collection than Games, so we don't need to assign total a uuid
@@ -181,122 +120,10 @@ app.get('/api/totalgamewins', async (req, res, next) => { //TODO CHANGE TOTALGAM
     }
 }
 */
-app.post('/api/updateusergamewins', async (req, res, next) => {
-    // incoming: gameId, userId, points
-    // outgoing: error
-
-    const { gameId, userId, points } = req.body;
-
-    try {
-        const result = await db.usersDB.findOneAndUpdate(
-            { UserId: userId }, 
-            { $inc: { ['scores.${gameId}']: points }});
-
-        res.status(200).json({
-            message: 'User game value updated successfully!',
-            game: result.UserGameWins,
-        });
-    }
-
-    catch (e) {
-        error = e.toString();
-        res.status(500).json({ message: 'Error updating user game value', error});   
-    }
-
-});
 
 //#endregion
 
-//#region Movie API
-
-app.post('/api/updatetotalmoviewins', async (req, res, next) => {
-    // incoming: movieId, points
-    // outgoing: error
-
-    const { movieId, points } = req.body;
-
-    try {
-        const result = await db.moviesDB.findOneAndUpdate(
-            { MovieId: movieId },
-            { $inc: { TotalMovieWins: points } } 
-        )
-
-        res.status(200).json({
-            message: 'Movie value updated successfully!',
-            movie: result.TotalMovieWins,
-        });
-    }
-
-    catch (e) {
-        error = e.toString();
-        res.status(500).json({ message: 'Error updating movie value', error});   
-    }
-
-});
-
-
-// Get the number of total movie wins from the database
-app.get('/api/totalmoviewins', async (req, res, next) => {
-    // incoming: movieId
-    // outgoing: TotalMovieWins
-
-    const { movieId } = req.query;
-
-    if (!movieId) {
-        return res.status(400).json({ message: 'Movie ID is required.' });
-    }
-
-    try {
-        const results = await db.moviesDB.findOne(
-            { gameId }, 
-            { projection: { TotalMovieWins: 1 }});
-        
-        // Check if it was found
-        if (!results) {
-            return res.status(404).json({ message: 'Movie not found!'});
-        }
-
-        res.status(200).json({
-            message: 'Movie wins retrieved successfully',
-            TotalMovieWins: results.TotalMovieWins || 0,
-        });
-    }
-
-    catch (e) {
-        error = e.toString();
-        res.status(500).json({ message: 'Error retrieving movie wins', error});
-    }
-    
-});
-
-
-app.post('/api/updateusermoviewins', async (req, res, next) => {
-    // incoming: movieId, userId, points
-    // outgoing: error
-
-    const { movieId, userId, points } = req.body;
-
-    try {
-        const result = await db.usersDB.findOneAndUpdate(
-            { UserId: userId }, 
-            { $inc: { ['scores.${movieId}']: points }});
-
-        res.status(200).json({
-            message: 'User movie value updated successfully!',
-            game: result.UserMovieWins,
-        });
-    }
-
-    catch (e) {
-        error = e.toString();
-        res.status(500).json({ message: 'Error updating user movie value', error});   
-    }
-
-});
-
-//#endregion
-
-//#region REFACTOR
+//#region GETs API
 
 //Get the searched item from the given genre
 app.get('/api/searchItem', async (req, res, next) => { //TODO: TEST FOR MULTIPLE MATCHES
@@ -337,7 +164,7 @@ app.get('/api/searchItem', async (req, res, next) => { //TODO: TEST FOR MULTIPLE
 
 // Get the number of wins for a specific item for a specific user
 app.get('/api/userItemWins', async (req, res, next) => {
-    // incoming: itemId, userId, genre
+    // incoming: itemId, userId
     // outgoing: message, userItemWins || message, error
 
     const { itemId, userId, genre } = req.body;
@@ -349,10 +176,6 @@ app.get('/api/userItemWins', async (req, res, next) => {
 
     if (!userId) {
         return res.status(400).json({ message: 'User ID is required.', error });
-    }
-
-    if(genre != "Game" && genre != "Movie") {
-        return res.status(400).json({ message: 'Enter a valid genre.', error });
     }
 
     try {
@@ -376,6 +199,143 @@ app.get('/api/userItemWins', async (req, res, next) => {
     }
     
 });
+
+// Get the number of total item wins from the database
+app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITEMWINS WITH DATABASE FIELD
+    // incoming: itemId, genre
+    // outgoing: message, totalItemWins || message, error
+
+    const { itemId, genre } = req.body;
+    var error = '';
+
+    if (!itemId) {
+        return res.status(400).json({ message: 'Item ID is required.', error });
+    }
+
+    if(genre != "Game" && genre != "Movie") {
+        return res.status(400).json({ message: 'Enter a valid genre.', error });
+    }
+
+    try {
+
+        if(genre == "Game")
+        {
+            const results = await db.gamesDB.findOne({ itemId }, { projection: { TotalGameWins: 1 }});
+        }
+        else
+        {
+            const results = await db.moviesDB.findOne({ gameId }, { projection: { TotalMovieWins: 1 }});
+        }
+        
+        // Check if it was found
+        if (!results) {
+            return res.status(404).json({ message: 'Results not found!', error});
+        }
+
+        res.status(200).json({ message: 'Total item wins retrieved successfully', totalItemWins: results.totalItemWins || 0 });
+    }
+
+    catch (e) {
+        error = e.toString();
+        res.status(500).json({ message: 'Error retrieving total item wins', error});
+    }
+    
+});
+
+//#endregion
+
+//#region POSTs API
+
+//Updates the user's score for the given game or movie, also updates the total win sccore 
+app.post('/api/updateUserItemWins', async (req, res, next) => {
+    // incoming: itemId, userId, genre, points
+    // outgoing: message, error
+
+    const { itemId, userId, points } = req.body;
+    var error = '';
+
+    if (!itemId) {
+        return res.status(400).json({ message: 'Item ID is required.', error });
+    }
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required.', error });
+    }
+
+    try {
+        const result = await db.usersDB.findOneAndUpdate({ UserId: userId }, { $inc: { ['scores.${itemId}']: points }});
+
+        res.status(200).json({message: 'User item wins value updated successfully!', error });
+        return updateTotalItemWinsLogic(itemId, genre, points);
+    }
+
+    catch (e) {
+        error = e.toString();
+        res.status(500).json({ message: 'Error updating user item wins value', error});   
+    }
+
+});
+
+//Updates the total wins for a game or movie
+app.post('/api/updateTotalItemWins', async (req, res, next) => {
+    // incoming: itemId, genre, points
+    // outgoing: message, error
+
+    const { itemId, genre, points} = req.body;
+    var error = '';
+
+    if (!itemId) {
+        return res.status(400).json({ message: 'Item ID is required.', error });
+    }
+
+    try {
+        return updateTotalItemWinsLogic(itemId, genre, points);
+    }
+
+    catch (e) {
+        error = e.toString();
+        res.status(500).json({ message: 'Error updating total item wins value', error});   
+    }
+
+});
+
+//Serves as the logic for updating the total wins for a game or movie
+//Exists due to updateUserItemWins's need to update the total win score as well
+async function updateTotalItemWinsLogic (itemId, genre, points) {
+    // incoming: itemId, genre, points
+    // outgoing: message, error
+
+    const { itemId, genre, points} = req.body;
+    var error = '';
+
+    if(genre != "Game" && genre != "Movie") {
+        return res.status(400).json({ message: 'Enter a valid genre.', error });
+    }
+
+    try {
+        if(genre == "Game")
+        {
+            const result = await db.gamesDB.findOneAndUpdate(
+                { GameId: itemId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
+                { $inc: { TotalGameWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
+            )
+        }
+        else
+        {
+            const result = await db.moviesDB.findOneAndUpdate(
+                { MovieId: itemId }, //TODO: REPLACE MOVIEID WITH DATABASE FIELD
+                { $inc: { TotalMovieWins: points } } //TODO: REPLACE TOTALMOVIEWINS WITH DATABASE FIELD
+            )
+        }
+
+        return res.status(200).json({ message: 'Item total win value updated successfully!', error });
+    }
+
+    catch (e) {
+        error = e.toString();
+        return res.status(500).json({ message: 'Error updating total item win value', error});   
+    }
+}
 
 //#endregion
 app.listen(5000); // start Node + Express server on port 5000
