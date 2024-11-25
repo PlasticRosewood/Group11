@@ -46,6 +46,21 @@ app.use(passport.session());
 
 app.use('/', authRouter);
 
+// // FOR TESTING PURPOSES - DELETE
+// db.usersDB.insertOne(
+//     { UserId: "testing",
+//      GameScores: { 
+//         "Astro Bot": 0,
+//         "Balatro": 0,
+//         "Concord":  0,
+//         "College Football 25": 0
+//      },
+//      MovieScores: {
+//         "Transformers One": 0,
+//         "Wicked": 0
+//      }
+//     });
+
 
 //TODO logout stuff, needs to use req.logout()
 
@@ -162,12 +177,13 @@ app.get('/api/searchItem', async (req, res, next) => { //TODO: TEST FOR MULTIPLE
     }
 });
 
+// TESTED: WORKING
 // Get the number of wins for a specific item for a specific user
 app.get('/api/userItemWins', async (req, res, next) => {
     // incoming: itemId, userId
     // outgoing: message, userItemWins || message, error
 
-    const { itemId, userId, genre } = req.body;
+    const { itemId, userId, genre } = req.body; 
     var error = '';
 
     if (!itemId) {
@@ -178,18 +194,42 @@ app.get('/api/userItemWins', async (req, res, next) => {
         return res.status(400).json({ message: 'User ID is required.', error });
     }
 
+    if (!genre) {
+        return res.status(400).json({ message: 'Genre is required.', error });
+    }
+
     try {
+        let results;
+
         //Not sure if this call works as intended, testing needed
-        const results = await db.usersDB.findOne({ UserId: userId }, { projection: { ['scores.${itemId}']: 1 }});
+        if (genre == "Game"){
+            results = await db.usersDB.findOne(
+                { UserId: userId }, 
+                { projection: { GameScores: 1 }});
+        }
+        if (genre == "Movie"){
+            results = await db.usersDB.findOne(
+                { UserId: userId },
+                { projection: { MovieScores: 1 }});
+        }
         
         // Check if it was found
         if (!results) {
             return res.status(404).json({ message: 'Results not found!'});
         }
 
+        // Retrieve the score for the specified itemId
+        let userItemWins = 0; // Default value if no score is found
+        if (genre === "Game" && results.GameScores && results.GameScores[itemId] !== undefined) {
+            userItemWins = results.GameScores[itemId];
+        } else if (genre === "Movie" && results.MovieScores && results.MovieScores[itemId] !== undefined) {
+            userItemWins = results.MovieScores[itemId];
+        }
+
+        // Send the response with the user's score for the specific itemId
         res.status(200).json({
             message: 'User item wins retrieved successfully',
-            userItemWins: results.userItemWins || 0 //Also not confident about here, depends on DB
+            userItemWins: userItemWins
         });
     }
 
@@ -201,6 +241,7 @@ app.get('/api/userItemWins', async (req, res, next) => {
 });
 
 // Get the number of total item wins from the database
+// TESTED: WORKING
 app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITEMWINS WITH DATABASE FIELD
     // incoming: itemId, genre
     // outgoing: message, totalItemWins || message, error
@@ -218,13 +259,19 @@ app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITE
 
     try {
 
+        let results;
+
         if(genre == "Game")
         {
-            const results = await db.gamesDB.findOne({ itemId }, { projection: { TotalGameWins: 1 }});
+            results = await db.gamesDB.findOne(
+                { Game: itemId }, 
+                { projection: { TotalWins: 1 }});
         }
-        else
+        if(genre == "Movie")
         {
-            const results = await db.moviesDB.findOne({ itemId }, { projection: { TotalMovieWins: 1 }});
+            results = await db.moviesDB.findOne(
+                { Movie: itemId }, 
+                { projection: { TotalWins: 1 }});
         }
         
         // Check if it was found
@@ -232,7 +279,7 @@ app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITE
             return res.status(404).json({ message: 'Results not found!', error});
         }
 
-        res.status(200).json({ message: 'Total item wins retrieved successfully', totalItemWins: results.totalItemWins || 0 });
+        res.status(200).json({ message: 'Total item wins retrieved successfully', totalItemWins: results.TotalWins || 0 });
     }
 
     catch (e) {
@@ -263,7 +310,9 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
     }
 
     try {
-        const result = await db.usersDB.findOneAndUpdate({ UserId: userId }, { $inc: { ['scores.${itemId}']: points }});
+        const result = await db.usersDB.findOneAndUpdate(
+            { UserId: userId }, 
+            { $inc: { ['scores.${itemId}']: points }});
 
         res.status(200).json({message: 'User item wins value updated successfully!', error });
         return updateTotalItemWinsLogic(itemId, genre, points);
