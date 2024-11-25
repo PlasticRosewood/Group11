@@ -224,7 +224,7 @@ app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITE
         }
         else
         {
-            const results = await db.moviesDB.findOne({ gameId }, { projection: { TotalMovieWins: 1 }});
+            const results = await db.moviesDB.findOne({ itemId }, { projection: { TotalMovieWins: 1 }});
         }
         
         // Check if it was found
@@ -305,7 +305,7 @@ async function updateTotalItemWinsLogic (itemId, genre, points) {
     // incoming: itemId, genre, points
     // outgoing: message, error
 
-    const { itemId, genre, points} = req.body;
+    // const { itemId, genre, points} = req.body; // Testing just disabling this because its used in parameters
     var error = '';
 
     if(genre != "Game" && genre != "Movie") {
