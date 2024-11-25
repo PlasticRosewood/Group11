@@ -47,19 +47,19 @@ app.use(passport.session());
 app.use('/', authRouter);
 
 // // FOR TESTING PURPOSES - DELETE
-// db.usersDB.insertOne(
-//     { UserId: "testing",
-//      GameScores: { 
-//         "Astro Bot": 0,
-//         "Balatro": 0,
-//         "Concord":  0,
-//         "College Football 25": 0
-//      },
-//      MovieScores: {
-//         "Transformers One": 0,
-//         "Wicked": 0
-//      }
-//     });
+db.usersDB.insertOne(
+    { UserId: "testing",
+     GameScores: { 
+        "Astro Bot": 0,
+        "Balatro": 0,
+        "Concord":  0,
+        "College Football 25": 0
+     },
+     MovieScores: {
+        "Transformers One": 0,
+        "Wicked": 0
+     }
+    });
 
 
 //TODO logout stuff, needs to use req.logout()
@@ -298,7 +298,7 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
     // incoming: itemId, userId, genre, points
     // outgoing: message, error
 
-    const { itemId, userId, points } = req.body;
+    const { itemId, userId, genre, points } = req.body;
     var error = '';
 
     if (!itemId) {
@@ -309,10 +309,24 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
         return res.status(400).json({ message: 'User ID is required.', error });
     }
 
+    if (!genre) {
+        return res.status(400).json({ message: 'Genre is required.', error });
+    }
+
     try {
-        const result = await db.usersDB.findOneAndUpdate(
-            { UserId: userId }, 
-            { $inc: { ['scores.${itemId}']: points }});
+        let result;
+        
+        if(genre == "Game") {
+            result = await db.usersDB.findOneAndUpdate(
+                { UserId: userId }, 
+                { $inc: { ['GameScores.${itemId}']: points }});
+            }
+        
+        if(genre == "Movie") {
+            result = await db.usersDB.findOneAndUpdate(
+                { UserId: userId }, 
+                { $inc: { ['MovieScores.${itemId}']: points }});
+            }
 
         res.status(200).json({message: 'User item wins value updated successfully!', error });
         return updateTotalItemWinsLogic(itemId, genre, points);
@@ -362,18 +376,22 @@ async function updateTotalItemWinsLogic (itemId, genre, points) {
     }
 
     try {
+
+    let result;
+
         if(genre == "Game")
         {
-            const result = await db.gamesDB.findOneAndUpdate(
+            result = await db.gamesDB.findOneAndUpdate(
                 { GameId: itemId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
-                { $inc: { TotalGameWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
+                { $inc: { TotalWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
             )
         }
-        else
+
+        if(genre == "Movie")
         {
-            const result = await db.moviesDB.findOneAndUpdate(
+            result = await db.moviesDB.findOneAndUpdate(
                 { MovieId: itemId }, //TODO: REPLACE MOVIEID WITH DATABASE FIELD
-                { $inc: { TotalMovieWins: points } } //TODO: REPLACE TOTALMOVIEWINS WITH DATABASE FIELD
+                { $inc: { TotalWins: points } } //TODO: REPLACE TOTALMOVIEWINS WITH DATABASE FIELD
             )
         }
 
