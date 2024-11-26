@@ -46,20 +46,20 @@ app.use(passport.session());
 
 app.use('/', authRouter);
 
-// // FOR TESTING PURPOSES - DELETE
-db.usersDB.insertOne(
-    { UserId: "testing",
-     GameScores: { 
-        "Astro Bot": 0,
-        "Balatro": 0,
-        "Concord":  0,
-        "College Football 25": 0
-     },
-     MovieScores: {
-        "Transformers One": 0,
-        "Wicked": 0
-     }
-    });
+// FOR TESTING PURPOSES - DELETE
+// db.usersDB.insertOne(
+//     { UserId: "testingJC",
+//      GameScores: { 
+//         "Astro Bot": 0,
+//         "Balatro": 0,
+//         "Concord":  0,
+//         "College Football 25": 0
+//      },
+//      MovieScores: {
+//         "Transformers One": 0,
+//         "Wicked": 0
+//      }
+//     });
 
 
 //TODO logout stuff, needs to use req.logout()
@@ -293,7 +293,8 @@ app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITE
 
 //#region POSTs API
 
-//Updates the user's score for the given game or movie, also updates the total win sccore 
+// TESTED - WORKS
+// Updates both the user's score for the given game or movie AND the total win sccore 
 app.post('/api/updateUserItemWins', async (req, res, next) => {
     // incoming: itemId, userId, genre, points
     // outgoing: message, error
@@ -314,22 +315,24 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
     }
 
     try {
-        let result;
+        let incrementField = genre === "Game" ? `GameScores.${itemId}` : `MovieScores.${itemId}`;
+        let updateQuery = { $inc: { [incrementField]: points } };
         
-        if(genre == "Game") {
-            result = await db.usersDB.findOneAndUpdate(
-                { UserId: userId }, 
-                { $inc: { ['GameScores.${itemId}']: points }});
-            }
-        
-        if(genre == "Movie") {
-            result = await db.usersDB.findOneAndUpdate(
-                { UserId: userId }, 
-                { $inc: { ['MovieScores.${itemId}']: points }});
-            }
+        const result = await db.usersDB.findOneAndUpdate(
+            { UserId: userId },
+            updateQuery
+        );
+
+        if (!result) {
+            return res.status(404).json({ message: 'User not found!', error });
+        }
+
+        await updateTotalItemWinsLogic(itemId, genre, points);
+
 
         res.status(200).json({message: 'User item wins value updated successfully!', error });
-        return updateTotalItemWinsLogic(itemId, genre, points);
+        
+        // return updateTotalItemWinsLogic(itemId, genre, points);
     }
 
     catch (e) {
@@ -339,7 +342,8 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
 
 });
 
-//Updates the total wins for a game or movie
+// Updates the total wins for a game or movie
+// TESTED - WORKS
 app.post('/api/updateTotalItemWins', async (req, res, next) => {
     // incoming: itemId, genre, points
     // outgoing: message, error
@@ -352,7 +356,9 @@ app.post('/api/updateTotalItemWins', async (req, res, next) => {
     }
 
     try {
-        return updateTotalItemWinsLogic(itemId, genre, points);
+        await updateTotalItemWinsLogic(itemId, genre, points);
+        
+        res.status(200).json({ message: 'Item total win value updated successfully!', error });
     }
 
     catch (e) {
@@ -372,7 +378,8 @@ async function updateTotalItemWinsLogic (itemId, genre, points) {
     var error = '';
 
     if(genre != "Game" && genre != "Movie") {
-        return res.status(400).json({ message: 'Enter a valid genre.', error });
+        // return res.status(400).json({ message: 'Enter a valid genre.', error });
+        throw new Error('Enter a valid genre.');
     }
 
     try {
@@ -382,7 +389,7 @@ async function updateTotalItemWinsLogic (itemId, genre, points) {
         if(genre == "Game")
         {
             result = await db.gamesDB.findOneAndUpdate(
-                { GameId: itemId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
+                { Game: itemId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
                 { $inc: { TotalWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
             )
         }
@@ -390,17 +397,18 @@ async function updateTotalItemWinsLogic (itemId, genre, points) {
         if(genre == "Movie")
         {
             result = await db.moviesDB.findOneAndUpdate(
-                { MovieId: itemId }, //TODO: REPLACE MOVIEID WITH DATABASE FIELD
+                { Movie: itemId }, //TODO: REPLACE MOVIEID WITH DATABASE FIELD
                 { $inc: { TotalWins: points } } //TODO: REPLACE TOTALMOVIEWINS WITH DATABASE FIELD
             )
         }
 
-        return res.status(200).json({ message: 'Item total win value updated successfully!', error });
+        //return res.status(200).json({ message: 'Item total win value updated successfully!', error });
     }
 
     catch (e) {
-        error = e.toString();
-        return res.status(500).json({ message: 'Error updating total item win value', error});   
+        throw new Error(`Error updating total item win value: ${e.toString()}`);
+        // error = e.toString();
+        // return res.status(500).json({ message: 'Error updating total item win value', error});   
     }
 }
 
