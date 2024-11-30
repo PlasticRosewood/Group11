@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+
+
+.voting-container{ /* essentially the entire page */
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, black, black);
+    position: relative;
+ 
+    background-image: url('../assets/texture.png'), url('../assets/hexPatterns.png');
+    background-size: cover, contain;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+    background-color: black;
+}
+
+.left-container{ /* left side of page like nav bar */
+    width: 0;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.left-container.expanded{
+    width:20vw;
+}
+
+.right-container{ /* awesome content for the card */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.voting-page{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:100vh;
+    padding: 0 50px;
+    position: relative;
+}
+
+.vs{  /* text styling */
+    position: absolute;
+    left: 40%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2800%;
+    font-weight: bold;
+    z-index: 1;
+    font-family: 'Bangers', cursive;
+    color: yellow;
+    text-shadow: 
+        2px 2px 0 black,
+        4px 4px 0 red,
+        6px 6px 5px rgba(0, 0, 0, 0.5);
+    line-height: 0.8;
+    opacity: 0;
+    animation: vsDrop 0.5s ease-out forwards;
+}
+
+.vs span.v{ /* positioning for letters */
+    position: relative;
+    top:-10px;
+    z-index: 2;
+   
+}
+.vs span.s{
+    position: relative;
+    top:10px;
+    right: 15%;
+}
+.card{ /*styling for the cards */
+    position: absolute;
+    width: 100%;
+    height: 70%;
+    background-color: red;
+    border: 2px solid black;
+    border-radius: 1%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: transform 0.3s ease-in-out;
+    opacity:0;
+}
+.card:hover{
+    transform: scale(1.05);
+}
+@keyframes shuffleInLeft{ /* left deck shuffle animation */
+    0%{
+        transform: translate(-100vw, 100vh);
+        opacity:0;
+    }
+    100%{
+        transform: translate(0, 0);
+        opacity:1;
+    }
+}
+@keyframes shuffleInRight{ /* right deck shuffle animation */
+    0%{
+        transform: translate(100vw, 100vh);
+        opacity:0;
+    }
+    100%{
+        transform: translate(0, 0);
+        opacity:1;
+    }
+}
+.left-card{
+    animation: shuffleInLeft 1s forwards;
+}
+.right-card{
+    animation: shuffleInRight 1s forwards;
+}
+
+@keyframes glow { /* glow on VS */
+    0% {
+        text-shadow: 1px 1px 0 red, 2px 2px 0 red, 4px 4px 3px rgba(0, 0, 0, 0.4);
+    }
+    50% {
+        text-shadow: 1px 1px 8px red, 2px 2px 12px red, 4px 4px 15px rgba(0, 0, 0, 0.5);
+    }
+    100% {
+        text-shadow: 1px 1px 0 red, 2px 2px 0 red, 4px 4px 3px rgba(0, 0, 0, 0.4);
+    }
+}
+.vs span{
+    animation: glow 1.5s ease-in-out infinite;
+}
+.boxes{ 
+    width: 50vh;
+    height: 100vh;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    position: absolute;
+    z-index: 0;
+  
+}
+
+.left-boxes{
+    right:150%;
+}
+.right-boxes{
+    left:150%;
+}
+
+@keyframes vsDrop{ /* vs drop animation, trying to add more */
+    0% {
+        transform: translate(-50%, -100vh); 
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, -50%); 
+        opacity: 1;
+    }
+}

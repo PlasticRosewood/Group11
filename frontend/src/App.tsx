@@ -4,7 +4,8 @@ import LoginPage from './pages/LoginPage';
 import CategoriesPage from './pages/CategoriesPage';
 import VerificationPage from './pages/VerificationPage';
 import TestPage from './pages/TestPage';
-import ProfilePage from './pages/profilePage';
+import ProfilePage from './pages/ProfilePage';
+import VotingPage from './pages/VotingPage';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
           <Route path='/verification' element= {<VerificationPage />} />
           <Route path='/test' element= {<TestPage />} />
           <Route path= '/profile' element= {<ProfilePage />} />
+          <Route path= '/voting' element= {<VotingPage />} />
         </Routes>
       </Router>
     </>
