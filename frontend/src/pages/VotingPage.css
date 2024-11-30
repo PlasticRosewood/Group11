@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
 
-
 .voting-container{ /* essentially the entire page */
     display: flex;
     width: 100vw;
@@ -61,7 +60,20 @@
     opacity: 0;
     animation: vsDrop 0.5s ease-out forwards;
 }
+.vs, .card { /* setting opacity to 0 */
+    opacity: 0;  
+    animation: none; 
+    transition: opacity 0.5s ease-in-out;
+}
+.left-card {
+    opacity: 0; 
+    animation: none;  
+}
 
+.right-card {
+    opacity: 0; 
+    animation: none;
+}
 .vs span.v{ /* positioning for letters */
     position: relative;
     top:-10px;
@@ -87,6 +99,17 @@
     transition: transform 0.3s ease-in-out;
     opacity:0;
 }
+
+/* holding animations until yes is clicked */
+.vs.start-animation{
+    animation:vsDrop 1s ease-out forwards;
+}
+.card.start-animation{
+    animation: shuffleInLeft 1s forwards
+}
+.right-card.start-animation{
+    animation: shuffleInRight 1s forwards;
+}
 .card:hover{
     transform: scale(1.05);
 }
@@ -109,12 +132,6 @@
         transform: translate(0, 0);
         opacity:1;
     }
-}
-.left-card{
-    animation: shuffleInLeft 1s forwards;
-}
-.right-card{
-    animation: shuffleInRight 1s forwards;
 }
 
 @keyframes glow { /* glow on VS */
@@ -162,3 +179,47 @@
         opacity: 1;
     }
 }
+
+.popup{ /* popup styling */
+    position: fixed;
+   
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.pop-text{
+    font-family: 'Oi', sans-serif; 
+    font-size: 3rem; 
+    color: black; 
+    text-shadow: 
+        2px 2px 4px rgba(255, 0, 0, 0.8), 
+        -2px -2px 4px rgba(0, 255, 0, 0.8),   
+        3px 3px 5px rgba(0, 0, 255, 0.8),    
+        -3px -3px 5px rgba(255, 255, 0, 0.8); 
+    line-height: 5; 
+    animation: idleAnimation 5s ease-in-out infinite;
+    margin-top: -20%;
+}
+
+.popup-buttons{
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 1rem;
+}
+
+.popup-buttons button{
+    font-size: 1.5rem;
+    padding: 0.8rem 7rem;
+    border:none;
+    
+}
+.popup-buttons button:hover{
+    background-color: rgb(226, 208, 208);
+}
+
