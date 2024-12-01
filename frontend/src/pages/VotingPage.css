@@ -105,13 +105,16 @@
     animation:vsDrop 1s ease-out forwards;
 }
 .card.start-animation{
-    animation: shuffleInLeft 1s forwards
+    animation: shuffleInLeft 1s forwards;
+
 }
 .right-card.start-animation{
     animation: shuffleInRight 1s forwards;
 }
 .card:hover{
-    transform: scale(1.05);
+    width: 103%;
+    height: 73%;
+    cursor: pointer;
 }
 @keyframes shuffleInLeft{ /* left deck shuffle animation */
     0%{
