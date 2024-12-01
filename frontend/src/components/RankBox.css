@@ -16,11 +16,12 @@
 }
 
 .coverArtWrapper {
-    width: 90%; /* Adjusted to ensure the wrapper is square */
-    height: auto; /* Height will be adjusted based on the width */
-    aspect-ratio: 1 / 1; /* Ensures the height is the same as the width */
-    overflow: hidden; /* Ensures the image is cropped to the wrapper */
-    border-radius: 50%; /* Rounds the corners of the wrapper */
+    width: 90%; 
+    max-width: 175px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 50%; 
     margin: 10px;
     place-self: center;
 }

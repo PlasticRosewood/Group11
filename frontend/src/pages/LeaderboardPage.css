@@ -1,8 +1,10 @@
-.leaderboardContainer {
+#leaderboardContainer {
     display: grid;
     height: 100%;
     overflow-y: auto;
+    overflow-x: none;
     grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
     gap: 20px;
 }
 
@@ -10,12 +12,17 @@
     border: 10px solid white;
     padding: 20px;
     border-radius: 8px;
-    width: 70%;
+    width: 100%;
+    min-width: 50vw;
     justify-self: center;
-
     display: grid;
     grid-template-rows: 15% 85%;
     place-items: center;
+}
+
+.leaderboardSection h1 {
+    cursor: pointer;
+    margin: 0;
 }
 
 .itemsList {
@@ -25,5 +32,6 @@
     place-items: center;
     padding: 0;
     margin: 0;
-
+    overflow-y: auto;
 }
+
