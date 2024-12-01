@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './LoginPage.css';
-import LoginBg from '../assets/LoginBg.svg';
-import Title from '../components/Title.tsx'; 
+import Title from '../components/Title.tsx';
 
 function LoginPage() {
   // hooks into login data
@@ -59,7 +58,7 @@ function LoginPage() {
   // check if email follows valid email format (using regex)
   function validateEmail(email : string) : boolean
   {
-    return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
+    return /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
   }
   function back() {
     setShowOptions(true);

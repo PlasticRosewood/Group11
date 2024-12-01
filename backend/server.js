@@ -9,7 +9,7 @@ const LocalStrategy = require('passport-local').Strategy
 const MongoClient = require('mongodb').MongoClient;
 var MongoStore = require('connect-mongo');
 
-//REPLACE WITH REAL MONGO URL
+//TODO: REPLACE WITH REAL MONGO URL
 const url = process.env.DB_URL;
 const app = express();
 const dbclient = new MongoClient(url);

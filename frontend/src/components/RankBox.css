@@ -1,0 +1,49 @@
+
+
+.rbWrapper {
+    height: 100%;
+    width: 100%;
+    border: 10px solid white;
+    background-color: gray;;
+
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: 15% 20% 20% 20% 25%;
+}
+
+.rankText, .memberName {
+    place-self: center;
+}
+
+.coverArtWrapper {
+    width: 90%; /* Adjusted to ensure the wrapper is square */
+    height: auto; /* Height will be adjusted based on the width */
+    aspect-ratio: 1 / 1; /* Ensures the height is the same as the width */
+    overflow: hidden; /* Ensures the image is cropped to the wrapper */
+    border-radius: 50%; /* Rounds the corners of the wrapper */
+    margin: 10px;
+    place-self: center;
+}
+
+.coverArt {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.globalStats {
+    display: grid;
+    grid-template-rows: 60% 20% 20%;
+}
+
+.globalStats > img {
+    width: 50%;
+    height: auto;
+    aspect-ratio: 1/1;
+    margin: 12px;
+    place-self: center;
+}
+
+.globalStats > h3 {
+    justify-self: center;
+}
