@@ -1,5 +1,4 @@
 
-import Box from '../components/Box.tsx';
 import SideNav from '../components/SideNav.tsx';
 import ThreeBox from '../components/ThreeBox.tsx';
 import Title from '../components/Title.tsx';
