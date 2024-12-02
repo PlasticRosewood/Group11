@@ -10,7 +10,7 @@ function Title({ className }: TitleProps) {
     <div className={`rotate ${className}`}>
         <Link to="/">
             <h2 className="stacked-text">
-            Peek<br />
+            Peak<br />
             or<br />
             Boo
             </h2>

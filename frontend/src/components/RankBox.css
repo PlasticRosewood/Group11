@@ -1,0 +1,50 @@
+
+
+.rbWrapper {
+    height: 100%;
+    width: 100%;
+    border: 10px solid white;
+    background-color: gray;;
+
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: 15% 20% 20% 20% 25%;
+}
+
+.rankText, .memberName {
+    place-self: center;
+}
+
+.coverArtWrapper {
+    width: 90%; 
+    max-width: 175px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 50%; 
+    margin: 10px;
+    place-self: center;
+}
+
+.coverArt {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.globalStats {
+    display: grid;
+    grid-template-rows: 60% 20% 20%;
+}
+
+.globalStats > img {
+    width: 50%;
+    height: auto;
+    aspect-ratio: 1/1;
+    margin: 12px;
+    place-self: center;
+}
+
+.globalStats > h3 {
+    justify-self: center;
+}
