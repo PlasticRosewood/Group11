@@ -291,6 +291,86 @@ app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITE
     
 });
 
+app.get('/api/returnAllMembers', async (req, res, next) => {
+    //incoming: genre
+    //outgoing: message, results[] || message, error
+
+    const { genre } = req.body;
+    var error = '';
+
+    if(genre != "Game" && genre != "Movie") {
+        return res.status(400).json({ message: 'Enter a valid genre.', error });
+    }
+
+    try {
+        let results;
+
+        if(genre == "Game") {
+            results = await db.gamesDB.find({}, { projection: { Game: 1, TotalWins: 1, _id: 0 } }).toArray();
+        }
+        if(genre == "Movie") {
+            results = await db.moviesDB.find({}, { projection: { Movie: 1, TotalWins: 1, _id: 0 } }).toArray();
+        }
+
+        
+    res.status(200).json({ message: 'All members retrieved successfully', results });
+    }
+    
+        catch (e) {
+            error = e.toString();
+            res.status(500).json({ message: 'Error retrieving all members', error});
+        }
+
+});
+
+app.get('/api/returnAllMembersForUser', async (req, res, next) => {
+    //incoming: userId, genre
+    //outgoing: message, results[] || message, error
+    
+    const { userId, genre } = req.body;
+    var error = '';
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required.', error });
+    }
+
+    if(genre != "Game" && genre != "Movie") {
+        return res.status(400).json({ message: 'Enter a valid genre.', error });
+    }
+
+    try {
+        let results;
+
+        //Not sure if this call works as intended, testing needed
+        if (genre == "Game"){
+            results = await db.usersDB.findOne(
+                { UserId: userId }, 
+                { projection: { GameScores: 1, _id: 0 }});
+        }
+        if (genre == "Movie"){
+            results = await db.usersDB.findOne(
+                { UserId: userId },
+                { projection: { MovieScores: 1, _id: 0 }});
+        }
+        
+        // Check if it was found
+        if (!results) {
+            return res.status(404).json({ message: 'Results not found!'});
+        }
+
+        // Send the response with the user's score for the specific itemId
+        res.status(200).json({
+            message: 'User item wins retrieved successfully', results
+        });
+    }
+
+    catch (e) {
+        error = e.toString();
+        res.status(500).json({ message: 'Error retrieving user item wins', error});
+    }
+    
+});
+
 //#endregion
 
 //#region POSTs API
