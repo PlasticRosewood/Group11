@@ -1,26 +1,39 @@
 import './SideNav.css';
-import React, {useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import Title from './Title.tsx';
 import { Link } from 'react-router-dom';
 
 /* binder tab stying??? */
 interface SideNavProps{ /* defining the type of prop */
     onToggle:(isExpanded : boolean) => void;
+    disableToggle?: boolean;
 }
 
-function SideNav ({ onToggle } : SideNavProps) {
+function SideNav ({ onToggle, disableToggle } : SideNavProps) {
     const[isExpanded, setIsExpanded] = useState(false);
 
+    useEffect(() => {
+        if(disableToggle){
+            setIsExpanded(true);
+            onToggle(true);
+        }
+    }, [disableToggle, onToggle]);
+
+    
     const toggleSidebar = () => {
+        if(!disableToggle){
         setIsExpanded(!isExpanded);
         onToggle(!isExpanded);
-    }
+        }
+    };
 
     return (
         <div className={`side-nav ${isExpanded ? 'expanded' : 'collapsed'}`}>
+            {!disableToggle && (
             <button className="toggle" onClick={toggleSidebar}>
                 &gt; {/* have to use this entity for > */}
             </button>
+            )}
             {isExpanded && (
             <div className="nav-content show">    
                 <Title className="sideTitle" />
