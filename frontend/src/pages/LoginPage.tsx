@@ -57,6 +57,8 @@ function LoginPage() {
         throw new Error(res.message);
       }
 
+      localStorage.setItem('currentUser', JSON.stringify(res.user));
+
       alert("Successfully Signed Up!");
       document.cookie = `token=${res.token};`;
       window.location.href = '/profile';
