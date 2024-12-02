@@ -32,7 +32,7 @@ function LoginPage() {
   }
 
   // signup function
-  function signUp(e : any) : void
+  async function signUp(e : any) : Promise<void>
   {
     e.preventDefault();
 
@@ -43,15 +43,61 @@ function LoginPage() {
       return;
     }
 
-    // TODO: make proper api calls here
+    // package and send data to api/login
+    let obj = {username:userName, email:email, password:password};
+    let js = JSON.stringify(obj);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/signup', {
+        method: 'POST',
+        body: js,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let res = JSON.parse(await response.text());
+
+      if (response.status !== 201) {
+        throw new Error(res.message);
+      }
+
+      alert("Successfully Signed Up!");
+
+    } catch (error : any) {
+      //todo: improve error handling
+      alert(error.toString());
+      return;
+    }
+
+
     alert('sign up for ' + userName + ' with email ' + email + ' and password ' + password);
   }
 
   // login function
-  function logIn(e : any) : void
+  async function logIn(e : any) : Promise<void>
   {
-    e.preventDefault();
-    // TODO: make proper api calls here
+    e.preventDefault(); 
+    
+     // package and send data to api/login
+     let obj = {username:userName, password:password};
+     let js = JSON.stringify(obj);
+ 
+     try {
+       const response = await fetch('http://localhost:5000/api/login', {
+         method: 'POST',
+         body: js,
+         headers: {
+           'Content-Type': 'application/json'
+         }
+       });
+       let res = JSON.parse(await response.text());
+  
+     } catch (error : any) {
+       //todo: improve error handling
+       alert(error.toString());
+       return;
+     }
+
     alert('login for ' + userName + ' with password ' + password);
   }
 

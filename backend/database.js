@@ -1,4 +1,5 @@
 //const {MongoClient} = require('mongodb');
+require('dotenv').config();
 const MongoClient = require('mongodb').MongoClient;
 
 //place your URL into the .env (turn .env.example into your .env)

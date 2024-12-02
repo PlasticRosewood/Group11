@@ -21,7 +21,7 @@ async function checkAuthenticated (req, res, next){
 //used to redirect from the login page to the normal pages, if logged in
 async function checkLoggedIn (req, res, next) {
     if(req.isAuthenticated()){
-        return res.redirect('/dashboard');
+        return res.redirect('/profile');
     }
     next();
 }
@@ -65,6 +65,12 @@ passport.deserializeUser((user, done) => {
 //#endregion
 
 router.post("/api/signup", async (req, res, next) => {
+
+    if (!req.body.username || !req.body.email || !req.body.password) {
+        res.status(400).json({ message: 'Username, email, and password are required :D' });
+        return;
+    }
+
     //makes sure the username and email are valid before trying to access the database
     if(!validator.isAlphanumeric(req.body.username) || req.body.username.length > 30) {
         res.status(422).json({message: 'Username is invalid'});
@@ -99,22 +105,11 @@ router.post("/api/signup", async (req, res, next) => {
     const newUser = { Username: req.body.username, Email: req.body.email, Password_Hash: hash,
         Date_Created: Date.now(), verified: false, token: token };
     await db.usersDB.insertOne(newUser);
-    //todo add email
-    //todo add jwt verification
 
 
     //res.json(newUser);
     res.status(201).json({message: 'User successfully created'});
 
-    // const mailConfig = {
-    //     from: 'noreply@peakorboo.xyz',
-    //     to: req.email,
-    //     subject: 'Email Verification',
-    //     text: `Hey, to activate your account please press this link!
-    //         https://peakorboo.xyz/verify/${token}
-    //
-    //         Thanks!`
-    // };
 
 
 });
@@ -125,7 +120,7 @@ router.post("/api/login", (req, res, next) =>
     next();
 },
     passport.authenticate('local',{
-    successRedirect: '/dashboard',
+    successRedirect: '/profile',
     failureRedirect: '/login'
 }));
 
