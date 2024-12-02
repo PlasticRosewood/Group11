@@ -67,7 +67,7 @@ passport.deserializeUser((user, done) => {
 router.post("/api/signup", async (req, res, next) => {
 
     if (!req.body.username || !req.body.email || !req.body.password) {
-        res.status(400).json({ message: 'Username, email, and password are required :D' });
+        res.status(400).json({ message: 'Username, email, and password are required' });
         return;
     }
 
@@ -114,20 +114,30 @@ router.post("/api/signup", async (req, res, next) => {
 
 });
 
+// changed redirects to error codes; handle routing ONLY in frontend
 router.post("/api/login", (req, res, next) =>
 {
-    //console.log("Login route processing request:", req.body);
-    next();
-},
-    passport.authenticate('local',{
-    successRedirect: '/profile',
-    failureRedirect: '/login'
-}));
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            return res.status(401).json({ message: 'Login failed' });
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                return next(err);
+            }
+            return res.status(200).json({ message: 'Login successful' });
+        });
+    })(req, res, next);
+});
+
 
 router.post('/api/logout', function(req, res, next){
     req.logout(function(err){
         if(err){ return next(err); }
-        res.redirect('/');
+        res.status(200); // CHANGE TO STATUS RETURN BC REDIRECT DOESNT WORK
     })
 })
 

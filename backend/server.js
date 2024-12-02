@@ -415,4 +415,5 @@ async function updateTotalItemWinsLogic (itemId, genre, points) {
 }
 
 //#endregion
+
 app.listen(5000); // start Node + Express server on port 5000
