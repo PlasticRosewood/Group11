@@ -5,9 +5,9 @@ const router = express.Router();
 const argon2 = require("argon2");
 const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
-const jwt = require("jsonwebtoken");
 const mailer = require("nodemailer");
 var validator = require("validator");
+const { ObjectId } = require('mongodb');
 
 //#region Functions
 //redirects away from protected pages, if logged out
@@ -100,15 +100,17 @@ router.post("/api/signup", async (req, res, next) => {
     const hash = await argon2.hash(req.body.password, {
         parallelism: 1
     }); //salts automatically, default config is otherwise good
-    const token = await jwt.sign({data: req.body.username},
-        process.env.JWT_SECRET || 'secret lmao', {expiresIn: '10m'});
-    const newUser = { Username: req.body.username, Email: req.body.email, Password_Hash: hash,
-        Date_Created: Date.now(), verified: false, token: token };
+    const newUser = { 
+        Username: req.body.username, 
+        Email: req.body.email, 
+        Password_Hash: hash,
+        Date_Created: Date.now()
+    };
     await db.usersDB.insertOne(newUser);
 
 
     //res.json(newUser);
-    res.status(201).json({message: 'User successfully created'});
+    res.status(201).json({message: 'User successfully created', id: newUser._id}); // Return user id as well for passing to user context
 
 
 
@@ -124,12 +126,17 @@ router.post("/api/login", (req, res, next) =>
         if (!user) {
             return res.status(401).json({ message: 'Login failed' });
         }
-        req.logIn(user, (err) => {
-            if (err) {
-                return next(err);
-            }
-            return res.status(200).json({ message: 'Login successful' });
-        });
+        try {
+            req.logIn(user, (err) => {
+                if (err) {
+                    return next(err);
+                }
+                return res.status(200).json({ message: 'Login successful', id: user.id});
+            });
+        } catch (err) {
+            return next(err);
+        }
+        
     })(req, res, next);
 });
 
@@ -137,8 +144,25 @@ router.post("/api/login", (req, res, next) =>
 router.post('/api/logout', function(req, res, next){
     req.logout(function(err){
         if(err){ return next(err); }
-        res.status(200); // CHANGE TO STATUS RETURN BC REDIRECT DOESNT WORK
+        res.status(200); // CHANGE TO STATUS RETURN BC REDIRECT DOESNT WORK IN BACK END
     })
 })
+
+// Use this function to get the data ssociated with a certain user
+router.get('/api/user', async (req, res) => {
+    const userId = req.query.id;
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required' });
+    }
+    try {
+        const user = await db.usersDB.findOne({ _id: ObjectId.createFromHexString(userId) });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({ username: user.Username, email: user.Email });
+    } catch (err) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 module.exports = router;
