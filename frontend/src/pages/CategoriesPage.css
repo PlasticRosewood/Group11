@@ -36,3 +36,51 @@
 .right-container.collapsed{
     width: 100vw;
 }
+/* Tile container styling */
+.tile-container {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr); /* Reduced number of columns */
+  grid-template-rows: repeat(10, 1fr); /* Reduced number of rows */
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 1; /* Ensures tiles are in the background */
+}
+
+.tile {
+  background: radial-gradient(circle, #333333, #1a1a1a);
+  border: 2px solid #333;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7);
+  animation: liftTile 6s ease-in-out infinite; /* Smoother animation */
+  transform-origin: center center;
+}
+.tile:hover {
+  width: 110%;
+  height: 110%;
+}
+@keyframes liftTile {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  25% {
+    transform: scale(1.05) translateY(-5px);
+  }
+  50% {
+    transform: scale(1.1) translateY(-10px);
+  }
+  75% {
+    transform: scale(1.05) translateY(-5px);
+  }
+}
+
+.tile:nth-child(odd) {
+  animation-delay: 0.3s; /* Reduced delay for more fluid animation */
+}
+
+.tile:nth-child(even) {
+  animation-delay: 0s;
+}

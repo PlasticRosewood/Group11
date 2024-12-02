@@ -9,26 +9,23 @@ function LoginPage() {
   const [email, setEmail] = useState('');
 
   // hook into style data
-  const [signUpVisible, setSignUpVisible] = useState(false);
+  const [signUpVisible, setSignUpVisible] = useState(true);
   const [logInVisible, setLogInVisible] = useState(false);
-  const[pageTitle, setPageTitle] = useState('');
-  const[showOptions, setShowOptions] = useState(true);
+  const [pageTitle, setPageTitle] = useState('');
+  const [showOptions, setShowOptions] = useState(true);
 
-  function showSignUp() : void
-  {
+  function showSignUp(): void {
     setSignUpVisible(true);
     setLogInVisible(false);
     setPageTitle('Register');
     setShowOptions(false);
   }
 
-  function showLogIn() : void
-  {
+  function showLogIn(): void {
     setSignUpVisible(false);
     setLogInVisible(true);
     setPageTitle('Login');
     setShowOptions(false);
-
   }
 
   // signup function
@@ -37,8 +34,7 @@ function LoginPage() {
     e.preventDefault();
 
     // check if email is valid
-    if (!validateEmail(email))
-    {
+    if (!validateEmail(email)) {
       alert('Invalid email format');
       return;
     }
@@ -106,6 +102,7 @@ function LoginPage() {
   {
     return /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
   }
+
   function back() {
     setShowOptions(true);
     setSignUpVisible(false);
@@ -114,47 +111,53 @@ function LoginPage() {
   }
 
   return (
-    <>
-    <div className="background">
-      <div className="roations">
-        <Title className="titre" />
+    <div className="outer-container">
+      <div className="background">
+        <div className="left-panel">
+          {/* Wrapper directly inside left panel */}
+          <div className="wrapper">
+            {Array.from({ length: 16 }).map((_, index) => (
+              <div key={index} className={`item item${index + 1}`}></div>
+            ))}
+          </div>
+          <div className="wrapper">
+            {Array.from({ length: 16 }).map((_, index) => (
+              <div key={index} className={`item item${index + 1}`}></div>
+            ))}
+          </div>
+        </div>
+                <div className="right-panel">
+          <div className="title-container">
+            <Title className="titre" />
+          </div>
+          <div className="form-container">
+            <div id="buttonContainer">
+              <button id="openNewUser" className="button" onClick={showSignUp}>New User</button>
+              <span className="line-break"></span>
+              <button id="openExistingUser" className="button" onClick={showLogIn}>Existing User</button>
+            </div>
+
+            <div id="newUserForm" className={signUpVisible ? 'show' : ''}>
+              <input type="text" id="newUserName" placeholder="Username" onChange={e => setUserName(e.target.value)} />
+              <input type="email" id="newUserEmail" placeholder="Email" onChange={e => setEmail(e.target.value)} />
+              <input type="password" id="newUserPassword" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+              <button id="signUp" className="signup-btn" onClick={signUp}>Sign Up</button>
+            </div>
+
+            <div id="existingUserForm" className={logInVisible ? 'show' : ''}>
+              <input type="text" id="existingUserName" placeholder="Username / Email" onChange={e => {
+                setUserName(e.target.value);
+                setEmail(e.target.value);
+              }} />
+              <input type="password" id="existingUserPassword" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+              <button id="logIn" className="login-btn" onClick={logIn}>Log In</button>
+            </div>
+          </div>
+        </div>
+
       </div>
-    <div id="loginSignupBox">
-      <div className="header">
-
-        {!showOptions && <button id="back" onClick={back}>Back</button>}
-        {pageTitle && <h2 id="authTitle">{pageTitle}</h2>}
-      </div>
-
-      {showOptions ? (
-
-        <div id="buttonContainer">
-          <button id="openNewUser" onClick={showSignUp}>New User</button>
-          <button id="openExistingUser" onClick={showLogIn}>Existing User</button>
-        </ div>
-      ) : (
-        <div></div>
-      )}
-
-      <div id="newUserForm" style={{ display: signUpVisible ? 'grid' : 'none' }}>
-        <input type="text" id="newUserName" placeholder="Username" onChange={e => setUserName(e.target.value)} />
-        <input type="email" id="newUserEmail" placeholder="Email" onChange={e => setEmail(e.target.value)} />
-        <input type="password" id="newUserPassword" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-        <button id="signUp" onClick={signUp}>Sign Up</button>
-      </div>
-
-      <div id="existingUserForm" style={{ display: logInVisible ? 'grid' : 'none' }}>
-        <input type="text" id="existingUserName" placeholder="Username / Email" onChange={e => {
-          setUserName(e.target.value);
-          setEmail(e.target.value);
-        }} />
-        <input type="password" id="existingUserPassword" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-        <button id="logIn" onClick={logIn}>Log In</button>
-      </div>      
     </div>
-  </div>
-    </>
-  )
+  );
 }
 
 export default LoginPage;

@@ -3,19 +3,23 @@ import ThreeBox from '../components/ThreeBox';
 import './CategoriesPage.css';
 import React, { useState } from 'react';
 
-function CategoriesPage(){
+function CategoriesPage() {
+  const [togExpand, isTogExpand] = useState(false);
 
-  const[togExpand, isTogExpand] = useState(false);
-
-  return(
+  return (
     <div className="categories-container">
-        <div className={`left-container ${togExpand ? 'expanded' : 'collapsed'}`}>
-          <SideNav onToggle={isTogExpand}/> {/* using awesome props */}
+      <div className={`left-container ${togExpand ? 'expanded' : 'collapsed'}`}>
+        <SideNav onToggle={isTogExpand} disableToggle={true} /> {/* using awesome props */}
+      </div>
+      <div className="divider"></div>
+      <div className={`right-container ${togExpand ? 'expanded' : 'collapsed'}`}>
+        <div className="tile-container">
+          {Array.from({ length: 200 }).map((_, index) => (
+            <div className="tile" key={index}></div>
+          ))}
         </div>
-        <div className="divider"></div>
-        <div className={`right-container ${togExpand ? 'expanded' : 'collapsed'}`}>
-          <ThreeBox />
-        </div>
+        <ThreeBox />
+      </div>
     </div>
   );
 }
