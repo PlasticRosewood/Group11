@@ -129,6 +129,7 @@ input[type="password"] {
   background-color: transparent; /* Remove background color */
   outline: none; /* Remove outline when clicked */
   transition: border-bottom-color 0.3s ease; /* Smooth transition for border color */
+  color: black;
 }
 
 input[type="text"]:focus,

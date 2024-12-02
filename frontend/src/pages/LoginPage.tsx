@@ -58,15 +58,13 @@ function LoginPage() {
       }
 
       alert("Successfully Signed Up!");
+      window.location.href = '/profile';
 
     } catch (error : any) {
       //todo: improve error handling
       alert(error.toString());
       return;
     }
-
-
-    alert('sign up for ' + userName + ' with email ' + email + ' and password ' + password);
   }
 
   // login function
@@ -87,14 +85,19 @@ function LoginPage() {
          }
        });
        let res = JSON.parse(await response.text());
-  
+
+       if (response.status !== 200) {
+        throw new Error(res.message);
+       }
+
+       alert("Successfully logged in!");
+       window.location.href = '/profile';
+       
      } catch (error : any) {
        //todo: improve error handling
        alert(error.toString());
        return;
      }
-
-    alert('login for ' + userName + ' with password ' + password);
   }
 
   // check if email follows valid email format (using regex)
