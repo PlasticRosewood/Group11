@@ -58,7 +58,6 @@ function LoginPage() {
       }
 
       alert("Successfully Signed Up!");
-      document.cookie = `token=${res.token};`;
       window.location.href = '/profile';
 
     } catch (error : any) {
@@ -92,7 +91,6 @@ function LoginPage() {
        }
 
        alert("Successfully logged in!");
-       document.cookie = `token=${res.token};`;
        window.location.href = '/profile';
        
      } catch (error : any) {

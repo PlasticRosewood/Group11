@@ -7,11 +7,13 @@ import TestPage from './pages/TestPage';
 import ProfilePage from './pages/ProfilePage';
 import VotingPage from './pages/VotingPage';
 import LeaderboardPage from './pages/LeaderboardPage';
+import { UserProvider } from './UserContext';
 
 function App() {
 
   return (
     <>
+    <UserProvider> {/*allow global context to be accessible in all routes*/}
       <Router>
         <Routes>
           <Route path='/' element= {<CategoriesPage />} />
@@ -23,6 +25,7 @@ function App() {
           <Route path='/leaderboard' element={<LeaderboardPage />} />
         </Routes>
       </Router>
+    </UserProvider>
     </>
   )
 }
