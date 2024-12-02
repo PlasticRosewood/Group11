@@ -1,22 +1,19 @@
-import React, { useEffect, useState } from 'react';
 import './ProfilePage.css';
+import { useState, useEffect } from 'react';
+import { useUser } from '../UserContext';
+import { useNavigate } from 'react-router-dom';
+
 
 function ProfilePage() {
-  const [user, setUser] = useState<any>(null);
+  const { user } = useUser();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            setUser(JSON.parse(currentUser));
-            console.log(currentUser);
-        }
-    }, []);
+  if (!user) {
+    return <h1>You are not logged in, please return to the <a onClick={() => navigate('/login')}>login page</a></h1>;
+  }
 
-    if (!user) {
-        return <div>Please log in to view your profile.</div>;
-    }
   // Placeholder data
-  const username = "@bossgirl8969420";
+  const username = user.username;
   const bio = "#girlboss UCF Go Knights SoFlo Java";
   const favoriteGame = "The Legend of Zelda: Breath of the Wild";
   const favoriteMovie = "Inception";

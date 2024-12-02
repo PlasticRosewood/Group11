@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './LoginPage.css';
 import Title from '../components/Title.tsx';
+import { useUser } from '../UserContext';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   // hooks into login data
@@ -13,6 +15,17 @@ function LoginPage() {
   const [logInVisible, setLogInVisible] = useState(false);
   const [pageTitle, setPageTitle] = useState('');
   const [showOptions, setShowOptions] = useState(true);
+  const navigate = useNavigate();
+
+  // hook into user context
+  const { user, setUser } = useUser();
+
+  useEffect(() => {
+    console.log('User state updated:', user);
+     if (user) {
+      navigate('/profile');
+     }
+  }, [user]);
 
   function showSignUp(): void {
     setSignUpVisible(true);
@@ -57,10 +70,15 @@ function LoginPage() {
         throw new Error(res.message);
       }
 
-      localStorage.setItem('currentUser', JSON.stringify(res.user));
-
-      alert("Successfully Signed Up!");
-      window.location.href = '/profile';
+      // Set global state of user
+      setUser({
+        id: res.id,
+        username: userName,
+        email: email,
+        gameScores: [],
+        movieScores: [],
+        songScores: []
+      });
 
     } catch (error : any) {
       //todo: improve error handling
@@ -92,8 +110,15 @@ function LoginPage() {
         throw new Error(res.message);
        }
 
-       alert("Successfully logged in!");
-       window.location.href = '/profile';
+       // TODO: set arrays to existing data from MongoDB
+       setUser({
+        id: res.id,
+        username: userName,
+        email: email,
+        gameScores: [],
+        movieScores: [],
+        songScores: []
+      });
        
      } catch (error : any) {
        //todo: improve error handling

@@ -10,7 +10,6 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import { UserProvider } from './UserContext';
 
 function App() {
-
   return (
     <>
     <UserProvider> {/*allow global context to be accessible in all routes*/}
