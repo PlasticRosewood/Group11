@@ -104,7 +104,10 @@ router.post("/api/signup", async (req, res, next) => {
         Username: req.body.username, 
         Email: req.body.email, 
         Password_Hash: hash,
-        Date_Created: Date.now()
+        Date_Created: Date.now(),
+        GameScores: Array(16).fill([0, 0]),
+        MovieScores: Array(16).fill([0, 0]),
+        SongScores: Array(16).fill([0, 0])
     };
     await db.usersDB.insertOne(newUser);
 
