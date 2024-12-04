@@ -399,9 +399,16 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
     }
 
     try {
-        let incrementField = genre === "Game" ? `GameScores.${itemId}` : `MovieScores.${itemId}`;
-        let updateQuery = { $inc: { [incrementField]: points } };
+        let incrementField = genre === "Game" ? `GameScores[itemId]` : `MovieScores.${itemId}`;
         
+        if (genre === "Game") {
+            let updateQuery = "{ $inc: { GameScores[itemId]: points } }";
+        }
+        
+        if (genre === "Movie") {
+            let updateQuery = "{ $inc: { MovieScores[itemId]: points } }";
+        }
+
         const result = await db.usersDB.findOneAndUpdate(
             { _id: new ObjectId(userId) },
             updateQuery
