@@ -5,8 +5,8 @@ import SideNav from '../components/SideNav';
 import { useUser } from '../UserContext'; //import the usercontext
 
 function VotingPage() {
-  const location = useLocation(); // Get the location object
-  const genre = location.state?.genre || "Unknown"; // Extract genre from the location state
+  const location = useLocation(); 
+  const genre = location.state?.genre || "Unknown"; 
 
   const [isExpanded, setIsExpanded] = useState(false); //side nav visibility
   const [showPopup, setShowPopup] = useState(true); // popup visibility
@@ -31,8 +31,8 @@ function VotingPage() {
   const [leftDeck, setLeftDeck] = useState(initialLeftDeck); 
   const [rightDeck, setRightDeck] = useState(initialRightDeck);
 
-  const incrementCardPoints = async (cardId: number, genre: string) => {
-    const userId = '674e2884151cfd68e8416ee6'; // Hardcoded user ID for testing
+  const incrementCardPoints = async (cardId: number, genre: string) => { /* note that genre is upper and singular */
+    const userId = '674e2884151cfd68e8416ee6'; // hardcoded user ID for testing
     
     if (!userId) {
       console.error('User ID is not available:', userId);
@@ -140,7 +140,7 @@ function VotingPage() {
         <div
           key={`${deckType}-card-${cardId}`}
           id={`card-${cardId}`}
-          className={`card ${deckType}-card card-${cardId} ${startAnimations ? 'start-animation' : ''}`}
+          className={`card ${deckType}-card card-${cardId}-${genre} ${startAnimations ? 'start-animation' : ''}`} /* added the genre abbr */
           style={{
             zIndex: 16 - index,
             marginTop: `${index * 0.8}%`,

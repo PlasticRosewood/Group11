@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './ThreeBoxes.css';
 
 /* category type for voting */
-type Category = "Movies" | "Games" | "Albums";
+type Category = "Movie" | "Game" | "Album";
 
 function ThreeBoxes() {
   const [currIndex, setCurrIndex] = useState(1); // checking for center box
@@ -57,12 +57,12 @@ function ThreeBoxes() {
 
 
   const handleBoxClick = (category: Category) => {
-    if (currIndex === 1 && category === "Movies") {
-      navigate('/voting', { state: { genre: "Movies" } });
-    } else if (currIndex === 2 && category === "Games") {
-      navigate('/voting', { state: { genre: "Games" } });
-    } else if (currIndex === 3 && category === "Albums") {
-      navigate('/voting', { state: { genre: "Albums" } });
+    if (currIndex === 1 && category === "Movie") {
+      navigate('/voting', { state: { genre: "Movie" } });
+    } else if (currIndex === 2 && category === "Game") {
+      navigate('/voting', { state: { genre: "Game" } });
+    } else if (currIndex === 3 && category === "Album") {
+      navigate('/voting', { state: { genre: "Album" } });
     }
   };
   
@@ -80,19 +80,19 @@ function ThreeBoxes() {
       <div className="box-container"> {/* super cool but using ternary op to determine which css to apply to each box */}
         <div
           className={`box ${currIndex === 1 ? 'center-box' : currIndex === 2 ? 'left-box' : 'right-box'} ${isAnimating ? 'no-idle' : ''}`}
-          onClick={() => currIndex === 1 && handleBoxClick("Movies")} 
+          onClick={() => currIndex === 1 && handleBoxClick("Movie")} 
         >
           Movies
         </div>
         <div
           className={`box ${currIndex === 2 ? 'center-box' : currIndex === 3 ? 'left-box' : 'right-box'} ${isAnimating ? 'no-idle' : ''}`}
-          onClick={() => currIndex === 2 && handleBoxClick("Games")} 
+          onClick={() => currIndex === 2 && handleBoxClick("Game")} 
         >
           Games
         </div>
         <div
           className={`box ${currIndex === 3 ? 'center-box' : currIndex === 1 ? 'left-box' : 'right-box'} ${isAnimating ? 'no-idle' : ''}`}
-          onClick={() => currIndex === 3 && handleBoxClick("Albums")} 
+          onClick={() => currIndex === 3 && handleBoxClick("Album")} 
         >
           Albums
         </div>
