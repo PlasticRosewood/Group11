@@ -283,7 +283,7 @@ app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITE
             return res.status(404).json({ message: 'Results not found!', error});
         }
 
-        res.status(200).json({ message: 'Total item wins retrieved successfully', totalItemWins: results.TotalWins || 0 });
+        res.status(200).json({ message: 'Total item wins retrieved successfully', GlobalScore: results.GlobalScore || 0 });
     }
 
     catch (e) {
@@ -308,10 +308,10 @@ app.get('/api/returnAllMembers', async (req, res, next) => {
         let results;
 
         if(genre == "Game") {
-            results = await db.gamesDB.find({}, { projection: { Game: 1, TotalWins: 1, _id: 0 } }).toArray();
+            results = await db.gamesDB.find({}, { projection: { GameID: 1, GlobalScore: 1, _id: 0 } }).toArray();
         }
         if(genre == "Movie") {
-            results = await db.moviesDB.find({}, { projection: { Movie: 1, TotalWins: 1, _id: 0 } }).toArray();
+            results = await db.moviesDB.find({}, { projection: { MovieID: 1, GlobalScore: 1, _id: 0 } }).toArray();
         }
 
         
@@ -458,41 +458,34 @@ async function updateTotalItemWinsLogic (itemId, genre, points) {
     // incoming: itemId, genre, points
     // outgoing: message, error
 
-    // const { itemId, genre, points} = req.body; // Testing just disabling this because its used in parameters
     var error = '';
 
     if(genre != "Game" && genre != "Movie") {
-        // return res.status(400).json({ message: 'Enter a valid genre.', error });
         throw new Error('Enter a valid genre.');
     }
 
     try {
+        let result;
 
-    let result;
+            if(genre == "Game")
+            {
+                result = await db.gamesDB.findOneAndUpdate(
+                    { Game: itemId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
+                    { $inc: { GlobalScore: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
+                )
+            }
 
-        if(genre == "Game")
-        {
-            result = await db.gamesDB.findOneAndUpdate(
-                { Game: itemId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
-                { $inc: { TotalWins: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
-            )
-        }
-
-        if(genre == "Movie")
-        {
-            result = await db.moviesDB.findOneAndUpdate(
-                { Movie: itemId }, //TODO: REPLACE MOVIEID WITH DATABASE FIELD
-                { $inc: { TotalWins: points } } //TODO: REPLACE TOTALMOVIEWINS WITH DATABASE FIELD
-            )
-        }
-
-        //return res.status(200).json({ message: 'Item total win value updated successfully!', error });
+            if(genre == "Movie")
+            {
+                result = await db.moviesDB.findOneAndUpdate(
+                    { Movie: itemId }, //TODO: REPLACE MOVIEID WITH DATABASE FIELD
+                    { $inc: { GlobalScore: points } } //TODO: REPLACE TOTALMOVIEWINS WITH DATABASE FIELD
+                )
+            }
     }
 
     catch (e) {
-        throw new Error(`Error updating total item win value: ${e.toString()}`);
-        // error = e.toString();
-        // return res.status(500).json({ message: 'Error updating total item win value', error});   
+        throw new Error(`Error updating total item win value: ${e.toString()}`); 
     }
 }
 
