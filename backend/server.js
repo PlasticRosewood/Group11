@@ -377,7 +377,6 @@ app.get('/api/returnAllMembersForUser', async (req, res, next) => {
 
 //#region POSTs API
 
-// TESTED - WORKS
 // Updates both the user's score for the given game or movie AND the total win sccore 
 app.post('/api/updateUserItemWins', async (req, res, next) => {
     // incoming: itemId, userId, genre, points
@@ -435,7 +434,6 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
 });
 
 // Updates the total wins for a game or movie
-// TESTED - WORKS
 app.post('/api/updateTotalItemWins', async (req, res, next) => {
     // incoming: itemId, genre, points
     // outgoing: message, error
@@ -459,6 +457,57 @@ app.post('/api/updateTotalItemWins', async (req, res, next) => {
     }
 
 });
+
+// Resets the user's scores for games or movies - TODO: UNTESTED
+app.post('/api/resetUserItemWins', async (req, res, next) => {
+    // incoming: userId, genre
+    // outgoing: message, error
+
+    const { userId, genre, points } = req.body;
+    var error = '';
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required.', error });
+    }
+
+    if (!genre) {
+        return res.status(400).json({ message: 'Genre is required.', error });
+    }
+
+    try {
+        let resetArray = new Array(16).fill(0);
+
+        if (genre === "Game") {
+            const result = await db.usersDB.findOneAndUpdate(
+                { _id: new ObjectId(userId) }, 
+                { GameScores: resetArray }
+            );
+        }
+
+        if (genre === "Movie") {
+            const result = await db.usersDB.findOneAndUpdate(
+                { _id: new ObjectId(userId) }, 
+                { MovieScores: resetArray }
+            );
+        }
+
+        if (!result) {
+            return res.status(404).json({ message: 'User not found!', error });
+        }
+
+        res.status(200).json({message: 'User item wins value updated successfully!', error });
+    }
+
+    catch (e) {
+        error = e.toString();
+        res.status(500).json({ message: 'Error updating user item wins value', error});   
+    }
+
+});
+
+//#endregion
+
+//#region Helper Function
 
 //Serves as the logic for updating the total wins for a game or movie
 //Exists due to updateUserItemWins's need to update the total win score as well
