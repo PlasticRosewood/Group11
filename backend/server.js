@@ -463,7 +463,7 @@ app.post('/api/resetUserItemWins', async (req, res, next) => {
     // incoming: userId, genre
     // outgoing: message, error
 
-    const { userId, genre, points } = req.body;
+    const { userId, genre} = req.body;
     var error = '';
 
     if (!userId) {
