@@ -268,14 +268,14 @@ app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITE
         if(genre == "Game")
         {
             results = await db.gamesDB.findOne(
-                { Game: itemId }, 
-                { projection: { TotalWins: 1 }});
+                { GameID: itemId }, 
+                { projection: { GlobalScore: 1 }});
         }
         if(genre == "Movie")
         {
             results = await db.moviesDB.findOne(
-                { Movie: itemId }, 
-                { projection: { TotalWins: 1 }});
+                { MovieID: itemId }, 
+                { projection: { GlobalScore: 1 }});
         }
         
         // Check if it was found
