@@ -190,7 +190,7 @@ app.get('/api/userItemWins', async (req, res, next) => {
     const { itemId, userId, genre } = req.body; 
     var error = '';
 
-    if (!itemId) {
+    if (itemId < 0 || itemId > 15) {
         return res.status(400).json({ message: 'Item ID is required.', error });
     }
 
@@ -386,9 +386,9 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
     const { itemId, userId, genre, points } = req.body;
     var error = '';
 
-    // if (!itemId) {
-    //     return res.status(400).json({ message: 'Item ID is required.', error });
-    // }
+    if (itemId < 0 || itemId > 15) {
+        return res.status(400).json({ message: 'Item ID is required.', error });
+    }
 
     if (!userId) {
         return res.status(400).json({ message: 'User ID is required.', error });
@@ -403,14 +403,14 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
         // let incrementField = genre === "Game" ? `GameScores[itemId]` : `MovieScores[itemId]`;
         
         if (genre === "Game") {
-            updateQuery = "{ $inc: { GameScores[itemId]: points } }";
+            updateQuery = { $inc: { [`GameScores.${itemId}`]: points } };
         }
 
         if (genre === "Movie") {
-            updateQuery = "{ $inc: { MovieScores[itemId]: points } }";
+            updateQuery = { $inc: { [`MovieScores.${itemId}`]: points } };
         }
 
-        const res = await db.usersDB.findOneAndUpdate(
+        const result = await db.usersDB.findOneAndUpdate(
             { _id: new ObjectId(userId) },
             updateQuery
         );
