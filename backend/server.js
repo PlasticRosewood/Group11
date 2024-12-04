@@ -149,7 +149,7 @@ app.get('/api/searchItem', async (req, res, next) => { //TODO: TEST FOR MULTIPLE
     // incoming: search, genre
     // outgoing: message, results[] || message, error
 
-    const { search , genre} = req.body;
+    const { search , genre } = req.query;
     var error = '';
 
     if(!search) {
@@ -186,7 +186,7 @@ app.get('/api/searchItemById', async (req, res, next) => { //TODO: TEST FOR MULT
     // incoming: id, genre
     // outgoing: message, results[] || message, error
 
-    const { id, genre } = req.body;
+    const { id, genre } = req.query;
     var error = '';
 
     if (id == null) {
@@ -218,7 +218,7 @@ app.get('/api/userItemWins', async (req, res, next) => {
     // incoming: itemId, userId
     // outgoing: message, userItemWins || message, error
 
-    const { itemId, userId, genre } = req.body; 
+    const { itemId, userId, genre } = req.query; 
     var error = '';
 
     if (itemId < 0 || itemId > 15) {
@@ -281,7 +281,7 @@ app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITE
     // incoming: itemId, genre
     // outgoing: message, totalItemWins || message, error
 
-    const { itemId, genre } = req.body;
+    const { itemId, genre } = req.query;
     var error = '';
 
     if (itemId < 0 || itemId > 15) {
@@ -328,7 +328,7 @@ app.get('/api/returnAllMembers', async (req, res, next) => {
     //incoming: genre
     //outgoing: message, results[] || message, error
 
-    const { genre } = req.body;
+    const { genre } = req.query;
     var error = '';
 
     if(genre != "Game" && genre != "Movie") {
@@ -360,7 +360,7 @@ app.get('/api/returnAllMembersForUser', async (req, res, next) => {
     //incoming: userId, genre
     //outgoing: message, results[] || message, error
     
-    const { userId, genre } = req.body;
+    const { userId, genre } = req.query;
     var error = '';
 
     if (!userId) {
