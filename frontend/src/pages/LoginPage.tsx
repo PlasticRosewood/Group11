@@ -145,12 +145,12 @@ function LoginPage() {
       <div className="background">
         <div className="left-panel">
           {/* Wrapper directly inside left panel */}
-          <div className="wrapper">
+          <div className="gameWrapper wrapper">
             {Array.from({ length: 16 }).map((_, index) => (
               <div key={index} className={`item item${index + 1}`}></div>
             ))}
           </div>
-          <div className="wrapper">
+          <div className="movieWrapper wrapper">
             {Array.from({ length: 16 }).map((_, index) => (
               <div key={index} className={`item item${index + 1}`}></div>
             ))}

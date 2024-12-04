@@ -2,47 +2,90 @@ import React, { useState, useEffect } from 'react';
 import './VotingPage.css';
 import { Link } from 'react-router-dom';
 import SideNav from '../components/SideNav';
+import { useUser } from '../UserContext'; //import the usercontext
 
 function VotingPage() {
-  const [isExpanded, setIsExpanded] = useState(false);  // side nav visibility
+  const [isExpanded, setIsExpanded] = useState(false); //side nav visibility
   const [showPopup, setShowPopup] = useState(true); // popup visibility
   const [startAnimations, setStartAnimations] = useState(false); // delay animation start
-  const [cardPoints, setCardPoints] = useState<{ [key: number]: number }>({});
+  const [cardPoints, setCardPoints] = useState<{ [key: number]: number }>({}); 
   const [round, setRound] = useState(1); //tracking current round, since we have 16 cards total and 8 cards on each side, should be 4 rounds bc 8v8 4v4 2v2 1v1
-  
+  const { user } = useUser(); //access the logged-in user's information
 
-  const initialDeck = Array.from({ length: 16 }, (_, i) => i + 1); /* cool mapping, array 1-16 */
+  const initialDeck = Array.from({ length: 16 }, (_, i) => i); /* cool mapping, array 1-16 */
 
 
   const shuffleDecks = (deck: number[]) => { /* shuffling decks for every round and making sure that split evenly */
     const shuffled = [...deck].sort(() => Math.random() - 0.5); 
     return { /* making sure decks are even */
-      leftDeck: shuffled.slice(0, Math.floor(shuffled.length / 2)),
+      leftDeck: shuffled.slice(0, Math.floor(shuffled.length / 2)), 
       rightDeck: shuffled.slice(Math.floor(shuffled.length / 2)),
     };
   };
 
   const { leftDeck: initialLeftDeck, rightDeck: initialRightDeck } = shuffleDecks(initialDeck); /* for deck states */
-  const [leftDeck, setLeftDeck] = useState(initialLeftDeck);
+  const [leftDeck, setLeftDeck] = useState(initialLeftDeck); 
   const [rightDeck, setRightDeck] = useState(initialRightDeck);
 
   //incrementing the card points
-  const incrementCardPoints = (cardId: number) => {
-    setCardPoints((prevPoints) => {
-      const updatedPoints = { ...prevPoints };
-      updatedPoints[cardId] = (updatedPoints[cardId] || 0) + 1;
-      console.log(`Card ${cardId} and num points: ${updatedPoints[cardId]}`);
-      return updatedPoints;
-    });
+  const incrementCardPoints = async (cardId: number, genre: string) => {
+    const userId = '674e2884151cfd68e8416ee6'; // Hardcoded user ID for testing
+    
+    if (!userId) {
+      console.error('User ID is not available:', userId);
+      return;
+    }
+  
+    console.log('User ID:', userId); // Log user ID to check it's being accessed correctly
+  
+    try {
+      const response = await fetch('/api/updateUserItemWins', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+          itemId: cardId,
+          genre,
+          points: 1,
+        }),
+      });
+  
+      if (!response.ok) {
+        // Log the raw response status and body if the request fails
+        const errorText = await response.text();
+        console.error('Failed to increment points: Status:', response.status, 'Response:', errorText);
+        return;
+      }
+  
+      try {
+        const result = await response.json(); // Parse success response
+        console.log('Server Response:', result);
+      } catch (jsonError) {
+        // Log error if JSON parsing fails
+        console.error('Error parsing JSON response:', jsonError);
+      }
+  
+      // Update local state with server-confirmed data
+      setCardPoints((prevPoints) => {
+        const updatedPoints = { ...prevPoints };
+        updatedPoints[cardId] = (updatedPoints[cardId] || 0) + 1;
+        console.log(`Card ${cardId} updated locally. Total points: ${updatedPoints[cardId]}`);
+        return updatedPoints;
+      });
+    } catch (error) {
+      console.error('Error incrementing card points:', error); // Log unexpected errors
+    }
   };
+  
 
+ 
   const handleCardClick = (deckType: 'left' | 'right', card: number) => { /* handles deck delection and checks for balancing */
-    if (leftDeck.length === 0 || rightDeck.length === 0) return;
+    if (leftDeck.length === 0 || rightDeck.length === 0) return; 
 
-    //increment cards clicked
-    incrementCardPoints(card);
+    incrementCardPoints(card, "Games");
 
-    //removing the cards
     if (deckType === 'left') {
       setLeftDeck((prevDeck) => prevDeck.slice(1)); //remove the clicked card
       setRightDeck((prevDeck) => prevDeck.slice(1)); //remove the opponent card
@@ -56,10 +99,11 @@ function VotingPage() {
   useEffect(() => {
     if (leftDeck.length === 0 && rightDeck.length === 0) {
       setTimeout(() => {
-        moveToNextRound(); 
+        moveToNextRound();
       }, 500);
     }
   }, [leftDeck, rightDeck]);
+
 
   const moveToNextRound = () => {
     console.log(`Round ${round + 1}`);
@@ -68,52 +112,52 @@ function VotingPage() {
     //advancing cards only if they have the points equal to the round number
     const advancingCards = Object.entries(cardPoints)
       .filter(([card, points]) => points === round) 
-      .map(([card, points]) => parseInt(card)); 
+      .map(([card]) => parseInt(card)); 
 
     console.log(' Cards going to next round:', advancingCards);
 
-    /* max 4 rounds */
     if (round >= 4) {
-      alert('AHHH');
+      alert('AHHH'); 
       return;
     }
 
     //shuffline and splitting decks evenly
     const { leftDeck: newLeftDeck, rightDeck: newRightDeck } = shuffleDecks(advancingCards);
 
-    setStartAnimations(false);
+    setStartAnimations(false); 
     setTimeout(() => {
       setLeftDeck(newLeftDeck);
-      setRightDeck(newRightDeck);
-      setStartAnimations(true);
+      setRightDeck(newRightDeck); 
+      setStartAnimations(true); 
       setRound((prev) => prev + 1); 
- 
     }, 500);
   };
 
   //creating the decks
   const createDeck = (deckType: 'left' | 'right', deck: number[]) => {
-    return deck.map((card, index) => {
-      const delay = `${index * 0.15}s`;
-
+    return deck.map((cardId, index) => {
+      const delay = `${index * 0.15}s`; 
       return (
         <div
-          key={`${deckType}-card-${index}`}
-          className={`card ${deckType}-card ${startAnimations ? 'start-animation' : ''}`}
+          key={`${deckType}-card-${cardId}`} 
+          id={`card-${cardId}`}  // card id
+          className={`card ${deckType}-card card-${cardId} ${startAnimations ? 'start-animation' : ''}`}
           style={{
             zIndex: 16 - index,
-            marginTop: `${index * 0.8}%`,
-            marginLeft: deckType === 'right' ? `${index * 1.5}%` : '0',
+            marginTop: `${index * 0.8}%`, 
+            marginLeft: deckType === 'right' ? `${index * 1.5}%` : '0', 
             marginRight: deckType === 'left' ? `${index * 1.5}%` : '0',
-            animationDelay: delay,
+            animationDelay: delay, 
           }}
-          onClick={() => handleCardClick(deckType, card)}
+          onClick={() => handleCardClick(deckType, cardId)}  
         >
-          Card {card}
+          Card {cardId}
         </div>
       );
     });
   };
+  
+  
 
   useEffect(() => {
     console.log(`This is the Round ${round}:`);
@@ -148,8 +192,8 @@ function VotingPage() {
             <div className="popup-buttons">
               <button
                 onClick={() => {
-                  setShowPopup(false);
-                  setStartAnimations(true);
+                  setShowPopup(false); 
+                  setStartAnimations(true); 
                 }}
               >
                 Yes
