@@ -98,7 +98,60 @@
     z-index: 100;
     transition: transform 0.3s ease-in-out;
     opacity:0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
+
+/* having to apply the images like this... */
+#card-0 {
+    background-image: url('../assets/movies/0.jpg');
+  }
+  #card-1 {
+    background-image: url('../assets/movies/1.jpg');
+  }
+  #card-2 {
+    background-image: url('../assets/movies/2.jpg');
+  }
+  #card-3 {
+    background-image: url('../assets/movies/3.jpg');
+  }
+  #card-4 {
+    background-image: url('../assets/movies/4.jpg');
+  }
+  #card-5 {
+    background-image: url('../assets/movies/5.jpg');
+  }
+  #card-6 {
+    background-image: url('../assets/movies/6.jpg');
+  }
+  #card-7 {
+    background-image: url('../assets/movies/7.jpg');
+  }
+  #card-8 {
+    background-image: url('../assets/movies/8.jpg');
+  }
+  #card-9 {
+    background-image: url('../assets/movies/9.jpg');
+  }
+  #card-10 {
+    background-image: url('../assets/movies/10.jpg');
+  }
+  #card-11 {
+    background-image: url('../assets/movies/11.jpg');
+  }
+  #card-12 {
+    background-image: url('../assets/movies/12.jpg');
+  }
+  #card-13 {
+    background-image: url('../assets/movies/13.jpg');
+  }
+  #card-14 {
+    background-image: url('../assets/movies/14.jpg');
+  }
+  #card-15 {
+    background-image: url('../assets/movies/15.jpg');
+  }
 
 /* holding animations until yes is clicked */
 .vs.start-animation{

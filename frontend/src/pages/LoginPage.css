@@ -183,7 +183,7 @@ input[type="password"]:focus {
 .item {
   width: 30%;
   height: 48%;  /* Increase height here */
-  background-color: red;
+  background-color: rgb(75, 74, 74);
   border-radius: 6px;
   position: absolute;
   left: max(calc(28% * 8), 100%); /* Starting position */
@@ -221,4 +221,142 @@ input[type="password"]:focus {
 
 .item8 {
   animation-delay: calc(30s / 8 * (0) * -1);
+}
+
+
+/* pictures for games, had to apply them manually so dumb */
+.gameWrapper .item:nth-child(1) {
+  background-image: url('../assets/games/0.jpg');
+}
+
+.gameWrapper .item:nth-child(2) {
+  background-image: url('../assets/games/1.jpg');
+}
+
+.gameWrapper .item:nth-child(3) {
+  background-image: url('../assets/games/2.jpg');
+}
+
+.gameWrapper .item:nth-child(4) {
+  background-image: url('../assets/games/3.jpg');
+}
+
+.gameWrapper .item:nth-child(5) {
+  background-image: url('../assets/games/4.jpg');
+}
+
+.gameWrapper .item:nth-child(6) {
+  background-image: url('../assets/games/5.jpg');
+}
+
+.gameWrapper .item:nth-child(7) {
+  background-image: url('../assets/games/6.jpg');
+}
+
+.gameWrapper .item:nth-child(8) {
+  background-image: url('../assets/games/7.jpg');
+}
+
+.gameWrapper .item:nth-child(9) {
+  background-image: url('../assets/games/8.jpg');
+}
+
+.gameWrapper .item:nth-child(10) {
+  background-image: url('../assets/games/9.jpg');
+}
+
+.gameWrapper .item:nth-child(11) {
+  background-image: url('../assets/games/10.jpg');
+}
+
+.gameWrapper .item:nth-child(12) {
+  background-image: url('../assets/games/11.jpg');
+}
+
+.gameWrapper .item:nth-child(13) {
+  background-image: url('../assets/games/12.jpg');
+}
+
+.gameWrapper .item:nth-child(14) {
+  background-image: url('../assets/games/13.jpg');
+}
+
+.gameWrapper .item:nth-child(15) {
+  background-image: url('../assets/games/14.jpg');
+}
+
+.gameWrapper .item:nth-child(16) {
+  background-image: url('../assets/games/15.jpg');
+}
+
+/* pictures for movie (bottom side) */
+.movieWrapper .item:nth-child(1) {
+  background-image: url('../assets/movies/0.jpg');
+}
+
+.movieWrapper .item:nth-child(2) {
+  background-image: url('../assets/movies/1.jpg');
+}
+
+.movieWrapper .item:nth-child(3) {
+  background-image: url('../assets/movies/2.jpg');
+}
+
+.movieWrapper .item:nth-child(4) {
+  background-image: url('../assets/movies/3.jpg');
+}
+
+.movieWrapper .item:nth-child(5) {
+  background-image: url('../assets/movies/4.jpg');
+}
+
+.movieWrapper .item:nth-child(6) {
+  background-image: url('../assets/movies/5.jpg');
+}
+
+.movieWrapper .item:nth-child(7) {
+  background-image: url('../assets/movies/6.jpg');
+}
+
+.movieWrapper .item:nth-child(8) {
+  background-image: url('../assets/movies/7.jpg');
+}
+
+.movieWrapper .item:nth-child(9) {
+  background-image: url('../assets/movies/8.jpg');
+}
+
+.movieWrapper .item:nth-child(10) {
+  background-image: url('../assets/movies/9.jpg');
+}
+
+.movieWrapper .item:nth-child(11) {
+  background-image: url('../assets/movies/10.jpg');
+}
+
+.movieWrapper .item:nth-child(12) {
+  background-image: url('../assets/movies/11.jpg');
+}
+
+.movieWrapper .item:nth-child(13) {
+  background-image: url('../assets/movies/12.jpg');
+}
+
+.movieWrapper .item:nth-child(14) {
+  background-image: url('../assets/movies/13.jpg');
+}
+
+.movieWrapper .item:nth-child(15) {
+  background-image: url('../assets/movies/14.jpg');
+}
+
+.movieWrapper .item:nth-child(16) {
+  background-image: url('../assets/movies/15.jpg');
+}
+
+/* covering entire box */
+.gameWrapper .item,
+.movieWrapper .item {
+  background-size: cover;
+  background-position: center;
 }
