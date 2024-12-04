@@ -23,7 +23,7 @@ function LoginPage() {
   useEffect(() => {
     console.log('User state updated:', user);
      if (user) {
-      navigate('/profile');
+      navigate('/');
      }
   }, [user]);
 
