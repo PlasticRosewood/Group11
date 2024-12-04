@@ -475,19 +475,22 @@ app.post('/api/resetUserWins', async (req, res, next) => {
     }
 
     try {
+        let result;
         let resetArray = new Array(16).fill(0);
 
         if (genre === "Game") {
-            const result = await db.usersDB.findOneAndUpdate(
+            result = await db.usersDB.findOneAndUpdate(
                 { _id: new ObjectId(userId) }, 
-                { GameScores: resetArray }
+                { $set: { ["GameScores"]: resetArray} },
+                { returnDocument: 'after'}
             );
         }
 
         if (genre === "Movie") {
-            const result = await db.usersDB.findOneAndUpdate(
+            result = await db.usersDB.findOneAndUpdate(
                 { _id: new ObjectId(userId) }, 
-                { MovieScores: resetArray }
+                { $set: { [MovieScores]: resetArray} },
+                { returnDocument: 'after'}
             );
         }
 
