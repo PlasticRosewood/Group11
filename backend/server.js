@@ -206,12 +206,12 @@ app.get('/api/userItemWins', async (req, res, next) => {
         //Not sure if this call works as intended, testing needed
         if (genre == "Game"){
             results = await db.usersDB.findOne(
-                { UserId: userId }, 
+                { _id: userId },
                 { projection: { GameScores: 1 }});
         }
         if (genre == "Movie"){
             results = await db.usersDB.findOne(
-                { UserId: userId },
+                { _id: userId },
                 { projection: { MovieScores: 1 }});
         }
         
@@ -344,12 +344,12 @@ app.get('/api/returnAllMembersForUser', async (req, res, next) => {
         //Not sure if this call works as intended, testing needed
         if (genre == "Game"){
             results = await db.usersDB.findOne(
-                { UserId: userId }, 
+                { _id: userId },
                 { projection: { GameScores: 1, _id: 0 }});
         }
         if (genre == "Movie"){
             results = await db.usersDB.findOne(
-                { UserId: userId },
+                { _id: userId },
                 { projection: { MovieScores: 1, _id: 0 }});
         }
         
@@ -401,7 +401,7 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
         let updateQuery = { $inc: { [incrementField]: points } };
         
         const result = await db.usersDB.findOneAndUpdate(
-            { UserId: userId },
+            { _id: userId },
             updateQuery
         );
 
