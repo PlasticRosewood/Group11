@@ -181,6 +181,37 @@ app.get('/api/searchItem', async (req, res, next) => { //TODO: TEST FOR MULTIPLE
     }
 });
 
+//Get the searched item from the given genre
+app.get('/api/searchItemById', async (req, res, next) => { //TODO: TEST FOR MULTIPLE MATCHES
+    // incoming: id, genre
+    // outgoing: message, results[] || message, error
+
+    const { id, genre } = req.body;
+    var error = '';
+
+    if (id == null) {
+        return res.status(400).json({ message: 'Searched id is required.', error });
+    }
+
+    if (genre != "Game" && genre != "Movie") {
+        return res.status(400).json({ message: 'Enter a valid genre.', error });
+    }
+
+    try {
+        let results;
+        if (genre == "Game") {
+            results = await db.gamesDB.find({ "GameID": id }).toArray();
+            return res.status(200).json({ message: 'Game(s) found successfully', results });
+        } else {
+            results = await db.moviesDB.find({ "MovieID": id }).toArray();
+            return res.status(200).json({ message: 'Movie(s) found successfully', results });
+        }
+    } catch (e) {
+        error = e.toString();
+        res.status(500).json({ message: 'Error retrieving searched item', error });
+    }
+});
+
 // TESTED: WORKING
 // Get the number of wins for a specific item for a specific user
 app.get('/api/userItemWins', async (req, res, next) => {
