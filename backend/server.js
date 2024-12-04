@@ -520,7 +520,7 @@ app.post('/api/resetUserWins', async (req, res, next) => {
         if (genre === "Movie") {
             result = await db.usersDB.findOneAndUpdate(
                 { _id: new ObjectId(userId) }, 
-                { $set: { [MovieScores]: resetArray} },
+                { $set: { ["MovieScores"]: resetArray} },
                 { returnDocument: 'after'}
             );
         }
