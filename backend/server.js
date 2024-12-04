@@ -459,7 +459,7 @@ app.post('/api/updateTotalItemWins', async (req, res, next) => {
 });
 
 // Resets the user's scores for games or movies - TODO: UNTESTED
-app.post('/api/resetUserItemWins', async (req, res, next) => {
+app.post('/api/resetUserWins', async (req, res, next) => {
     // incoming: userId, genre
     // outgoing: message, error
 
