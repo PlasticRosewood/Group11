@@ -31,60 +31,118 @@ function VotingPage() {
   const [leftDeck, setLeftDeck] = useState(initialLeftDeck); 
   const [rightDeck, setRightDeck] = useState(initialRightDeck);
 
-  const incrementCardPoints = async (cardId: number, genre: string) => { /* note that genre is upper and singular */
-    const userId = '674e2884151cfd68e8416ee6'; // hardcoded user ID for testing
-    
+
+  const resetUserWins = async () => { /* requires id and genre */
+    const userId = user?.id;
     if (!userId) {
-      console.error('User ID is not available:', userId);
+      console.error('User iD not found');
       return;
     }
-  
-    console.log('User ID:', userId); 
-    console.log('Genre being sent to API:', genre);
-    
+
     try {
-      const response = await fetch('/api/updateUserItemWins', {
+      const response = await fetch(`http://localhost:5000/api/resetUserWins`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           userId: userId,
-          itemId: cardId,
           genre: genre,
-          points: 1,
         }),
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Failed to increment points: Status:', response.status, 'Response:', errorText);
+        console.error('Could not fetch properly', response.status, 'response type:', errorText);
         return;
       }
-  
-      try {
-        const result = await response.json();
-        console.log('Server Response:', result);
-      } catch (jsonError) {
-        console.error('Error parsing JSON response:', jsonError);
-      }
-  
-      setCardPoints((prevPoints) => {
-        const updatedPoints = { ...prevPoints };
-        updatedPoints[cardId] = (updatedPoints[cardId] || 0) + 1;
-        console.log(`Card ${cardId} updated locally. Total points: ${updatedPoints[cardId]}`);
-        return updatedPoints;
-      });
+
+      const result = await response.json();
+      console.log('ResetUserWins: ', result.message);
     } catch (error) {
-      console.error('Error incrementing card points:', error);
+      console.error('Resetting points not working:', error);
     }
-  };
+};
+
+
+const getAllUserScores = async (genre: string) => { /* requires userId and genre */
+  const userId = user?.id;
+  if (!userId) {
+    console.error('Issue with userId');
+    return;
+  }
+
+  try {
+    console.log(`User iD: ${userId} and Genre: ${genre}`);
+    
+    const response = await fetch(`http://localhost:5000/api/returnAllMembersForUser?userId=${userId}&genre=${genre}`); /* fancy query */
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Failed to get user scores: ', response.status, 'Response:', errorText);
+      return;
+    }
+
+    const result = await response.json();
+    console.log('Fetched user scores:', result.results);
+
+  
+    const advancingCards = result.results; /* wait this might be the issue, take out .advancing */
+    /* passing results, it is coming out as an object so must filter through in  next round logic  */
+    
+    return advancingCards; 
+
+  } catch (error) {
+    console.error('getAllUserScores error: ', error);
+  }
+};
+
+
+
+const incrementCardPoints = async (cardId: number, genre: string) => { /* reuires itemId, userId, genre, and how many points */
+  const userId = user?.id;
+  if (!userId) {
+    console.error('UseriD error/was not found:', userId);
+    return;
+  }
+
+  try { /* make sure to use http://localhost:5000 to make the call */
+    const response = await fetch('http://localhost:5000/api/updateUserItemWins', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId,
+        itemId: cardId,
+        genre: genre,
+        points: 1, 
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Did not increment points properly: ', response.status, 'Response:', errorText);
+      return;
+    }
+
+    const result = await response.json();
+    console.log('Response:', result);
+    
+  
+  } catch (error) {
+    console.error('nooo dont do it to me: ', error);
+  }
+};
+
   
 
   const handleCardClick = (deckType: 'left' | 'right', card: number) => { /* handles deck delection and checks for balancing */
     if (leftDeck.length === 0 || rightDeck.length === 0) return;
 
     incrementCardPoints(card, genre); 
+
+    console.log(`Card ${card} chosen from the ${deckType} deck`);
 
     if (deckType === 'left') {
       setLeftDeck((prevDeck) => prevDeck.slice(1)); //remove the clicked card
@@ -104,43 +162,57 @@ function VotingPage() {
     }
   }, [leftDeck, rightDeck]);
 
-  const moveToNextRound = () => {
+  const moveToNextRound = async () => {
     console.log(`Round ${round + 1}`);
-    console.log('Current Card Points:', cardPoints);
+    
+    /* only check when decks are empty */
+    if (leftDeck.length === 0 && rightDeck.length === 0) {
+      
+      const result = await getAllUserScores(genre); /* calling only when round ends */
+      
+    
+      const scores = result[`${genre}Scores`]; 
+      
+      /* if game has 4 points it wins */
+      const winnerIndex = scores.indexOf(4);
+      if (winnerIndex >= 0) {
+        alert(`Card ${winnerIndex} wins!`);
+        return;
+      }
 
-    //advancing cards only if they have the points equal to the round number
-    const advancingCards = Object.entries(cardPoints)
-      .filter(([card, points]) => points === round)
-      .map(([card]) => parseInt(card));
-
-    console.log('Cards going to next round:', advancingCards);
-
-    if (round >= 4) {
-      alert('AHHH');
-      return;
+      
+      // only cards with points that equate to the current round move forward
+      const advancingCards = scores
+        .map((score: number, index: number) => (score === round ? index : -1))
+        .filter((cardId: number) => cardId !== -1);
+  
+      console.log('Advancing cards to next round:', advancingCards);
+  
+      
+      const { leftDeck: newLeftDeck, rightDeck: newRightDeck } = shuffleDecks(advancingCards);
+      
+     
+      setStartAnimations(false);
+      setTimeout(() => {
+        setLeftDeck(newLeftDeck);
+        setRightDeck(newRightDeck);
+        setStartAnimations(true);
+        setRound((prev) => prev + 1); /* don't forget to incrmeent round */
+      }, 500);
     }
-
-    //shuffline and splitting decks evenly
-    const { leftDeck: newLeftDeck, rightDeck: newRightDeck } = shuffleDecks(advancingCards);
-
-    setStartAnimations(false);
-    setTimeout(() => {
-      setLeftDeck(newLeftDeck);
-      setRightDeck(newRightDeck);
-      setStartAnimations(true);
-      setRound((prev) => prev + 1);
-    }, 500);
   };
+  
+  
 
   //creating the decks
   const createDeck = (deckType: 'left' | 'right', deck: number[]) => {
-    return deck.map((cardId, index) => {
+    return deck.map((cardId: number, index) => { 
       const delay = `${index * 0.15}s`;
       return (
         <div
           key={`${deckType}-card-${cardId}`}
           id={`card-${cardId}`}
-          className={`card ${deckType}-card card-${cardId}-${genre} ${startAnimations ? 'start-animation' : ''}`} /* added the genre abbr */
+          className={`card ${deckType}-card card-${cardId}-${genre} ${startAnimations ? 'start-animation' : ''}`}
           style={{
             zIndex: 16 - index,
             marginTop: `${index * 0.8}%`,
@@ -155,6 +227,7 @@ function VotingPage() {
       );
     });
   };
+  
 
   useEffect(() => {
     console.log(`This is the Round ${round}:`);
@@ -191,6 +264,7 @@ function VotingPage() {
                 onClick={() => {
                   setShowPopup(false);
                   setStartAnimations(true);
+                  resetUserWins();
                 }}
               >
                 Yes
