@@ -5,6 +5,7 @@ const passport = require('passport');
 const session = require('express-session');
 
 var MongoStore = require('connect-mongo');
+const ObjectID = require('mongodb').ObjectId
 const db = require('./database');
 
 //TODO: REPLACE WITH REAL MONGO URL
@@ -206,12 +207,12 @@ app.get('/api/userItemWins', async (req, res, next) => {
         //Not sure if this call works as intended, testing needed
         if (genre == "Game"){
             results = await db.usersDB.findOne(
-                { _id: userId },
+                { _id: new ObjectID(userId) },
                 { projection: { GameScores: 1 }});
         }
         if (genre == "Movie"){
             results = await db.usersDB.findOne(
-                { _id: userId },
+                { _id: new ObjectID(userId) },
                 { projection: { MovieScores: 1 }});
         }
         
@@ -344,12 +345,12 @@ app.get('/api/returnAllMembersForUser', async (req, res, next) => {
         //Not sure if this call works as intended, testing needed
         if (genre == "Game"){
             results = await db.usersDB.findOne(
-                { _id: userId },
+                { _id: new ObjectID(userId) },
                 { projection: { GameScores: 1, _id: 0 }});
         }
         if (genre == "Movie"){
             results = await db.usersDB.findOne(
-                { _id: userId },
+                { _id: new ObjectID(userId) },
                 { projection: { MovieScores: 1, _id: 0 }});
         }
         
@@ -401,7 +402,7 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
         let updateQuery = { $inc: { [incrementField]: points } };
         
         const result = await db.usersDB.findOneAndUpdate(
-            { _id: userId },
+            { _id: new ObjectID(userId) },
             updateQuery
         );
 
