@@ -253,7 +253,7 @@ app.get('/api/totalItemWins', async (req, res, next) => { //TODO CHANGE TOTALITE
     const { itemId, genre } = req.body;
     var error = '';
 
-    if (!itemId) {
+    if (itemId < 0 || itemId > 15) {
         return res.status(400).json({ message: 'Item ID is required.', error });
     }
 
