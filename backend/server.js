@@ -386,9 +386,9 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
     const { itemId, userId, genre, points } = req.body;
     var error = '';
 
-    if (!itemId) {
-        return res.status(400).json({ message: 'Item ID is required.', error });
-    }
+    // if (!itemId) {
+    //     return res.status(400).json({ message: 'Item ID is required.', error });
+    // }
 
     if (!userId) {
         return res.status(400).json({ message: 'User ID is required.', error });
@@ -399,17 +399,18 @@ app.post('/api/updateUserItemWins', async (req, res, next) => {
     }
 
     try {
-        let incrementField = genre === "Game" ? `GameScores[itemId]` : `MovieScores.${itemId}`;
+        let updateQuery;
+        // let incrementField = genre === "Game" ? `GameScores[itemId]` : `MovieScores[itemId]`;
         
         if (genre === "Game") {
-            let updateQuery = "{ $inc: { GameScores[itemId]: points } }";
-        }
-        
-        if (genre === "Movie") {
-            let updateQuery = "{ $inc: { MovieScores[itemId]: points } }";
+            updateQuery = "{ $inc: { GameScores[itemId]: points } }";
         }
 
-        const result = await db.usersDB.findOneAndUpdate(
+        if (genre === "Movie") {
+            updateQuery = "{ $inc: { MovieScores[itemId]: points } }";
+        }
+
+        const res = await db.usersDB.findOneAndUpdate(
             { _id: new ObjectId(userId) },
             updateQuery
         );
@@ -477,7 +478,7 @@ async function updateTotalItemWinsLogic (itemId, genre, points) {
             if(genre == "Game")
             {
                 result = await db.gamesDB.findOneAndUpdate(
-                    { Game: itemId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
+                    { GameID: itemId }, //TODO: REPLACE GAMEID WITH DATABASE FIELD
                     { $inc: { GlobalScore: points } } //TODO: REPLACE TOTALGAMEWINS WITH DATABASE FIELD
                 )
             }
@@ -485,7 +486,7 @@ async function updateTotalItemWinsLogic (itemId, genre, points) {
             if(genre == "Movie")
             {
                 result = await db.moviesDB.findOneAndUpdate(
-                    { Movie: itemId }, //TODO: REPLACE MOVIEID WITH DATABASE FIELD
+                    { MovieID: itemId }, //TODO: REPLACE MOVIEID WITH DATABASE FIELD
                     { $inc: { GlobalScore: points } } //TODO: REPLACE TOTALMOVIEWINS WITH DATABASE FIELD
                 )
             }
