@@ -440,8 +440,8 @@ app.post('/api/updateTotalItemWins', async (req, res, next) => {
 
     const { itemId, genre, points} = req.body;
     var error = '';
-
-    if (!itemId) {
+    
+    if (itemId == null) {
         return res.status(400).json({ message: 'Item ID is required.', error });
     }
 
