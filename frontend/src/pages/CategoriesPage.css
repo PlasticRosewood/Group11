@@ -52,7 +52,7 @@
 }
 
 .tile {
-  background: radial-gradient(circle, #333333, #1a1a1a);
+  background: radial-gradient(circle, #494949, #292929);
   border: 2px solid #333;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7);
   animation: liftTile 6s ease-in-out infinite; /* Smoother animation */
