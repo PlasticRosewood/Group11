@@ -83,32 +83,34 @@
   .history-item {
     display: flex;
     justify-content: space-between;
+    align-items: center; /* Ensures vertical alignment is consistent */
     padding: 10px 0;
     border-bottom: 1px solid #333;
-  }
-  
-  .history-item:last-child {
+    gap: 15px; /* Adds space between the title and score */
+}
+
+.history-item:last-child {
     border-bottom: none;
-  }
-  
-  .game-name {
+}
+
+.game-name, .game-score, .movie-score {
+    margin: 0 10px; /* Adds horizontal spacing around each element */
+}
+
+.game-name, .movie-name {
     font-weight: bold;
-  }
-  
-  .game-details {
+    margin-right: 20px; /* Adds space between the title and score */
+}
+
+.game-details, .movie-details {
     font-size: 0.9rem;
     color: #bbb;
-  }
-  
-  .game-score {
+    margin-right: 10px; /* Adds space to the right */
+}
+
+.game-score, .movie-score {
     font-size: 1rem;
     color: #4caf50;
     font-weight: bold;
-  }
-
-  .movie-score{
-       font-size: 1rem;
-    color: #4caf50;
-    font-weight: bold;
-  }
-  
+    margin-left: 10px; /* Adds space to the left of scores */
+}

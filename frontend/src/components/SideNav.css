@@ -1,78 +1,117 @@
-.side-nav{
-    width:0;
+.side-nav {
+    width: 0;
     display: flex;
-    align-items:center;
-    height:100%;
-    font-size: 40px;
-    position:relative;
+    align-items: center;
+    height: 100%;
+    font-size: 30px;
+    position: relative;
     transition: width 0.5s ease;
     z-index: 100;
-   
+    background-color: #1a1a1a; /* Dark background */
+    color: #f1f1f1; /* Light text color */
 }
-.side-nav.expanded{
-  
-    width:100%;
- 
+
+.side-nav.expanded {
+    width: 100%;
 }
+
 .toggle { /* toggle button styling */
     cursor: pointer;
     font-size: 20px;
     position: absolute;
     border-radius: 50%;
     border-style: solid;
-    border-color: black;
+    border-color: #faf3f3; /* Dark border */
     border-width: 1px;
-    width: 5%;       
-    height: 5%;      
-    display: flex;     
-    align-items: center; 
-    justify-content: center; 
-    background-color: #f1f1f1; 
+    width: 5%;
+    height: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #333; /* Darker button */
+    color: #f1f1f1; /* Light text */
     z-index: 100;
-    transition: width 0.5s ease;
+    transition: width 0.5s ease, background-color 0.3s ease;
 }
 
+.toggle:hover {
+    background-color: #444; /* Slightly lighter on hover */
+}
 
-.side-nav.expanded .toggle{ /* position of button after nav open */
-    left:93%;
-   
+.side-nav.expanded .toggle { /* position of button after nav open */
+    left: 93%;
 }
-.side-nav.collapsed .toggle{ /* position of button after nav closed */
-    left:100%;
-    margin-left:30px;
+
+.side-nav.collapsed .toggle { /* position of button after nav closed */
+    left: 100%;
+    margin-left: 30px;
 }
-.nav-content{ 
-    display:flex;
+
+.nav-content {
+    display: flex;
     flex-direction: column;
-    align-items:center;
-    transition: width 0.5s ease;
+    align-items: center;
+    transition: transform 0.5s ease;
     border-width: 3px;
-    background-color: rgb(217, 255, 0);
-    height:100vh;
+    background-color: #242424; /* Slightly lighter than the sidebar for contrast */
+    height: 100vh;
     transform: translateX(-100%);
     overflow: hidden;
+    color: #f1f1f1; /* Text color */
 }
-.side-nav.expanded .nav-content{
+
+.side-nav.expanded .nav-content {
     transform: translateX(0);
 }
 
-.side-nav ul{
-    list-style-type: none; 
+.side-nav ul {
+    list-style-type: none;
     padding: 50px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap:20%;
+    gap: 20%;
 }
 
+.side-nav ul {
+    list-style-type: none;
+    padding: 100px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20%;
+}
+.side-nav ul li {
+    font-size: 1.2em;
+    color: #f1f1f1; /* Light text */
+    transition: color 0.3s ease;
+}
+
+.side-nav ul li:hover {
+    color: #a6dcef; /* Light blue for hover effect */
+    cursor: pointer;
+}
+
+.class
+
 .auth {
-    margin-top: auto; 
+    margin-top: auto;
     font-size: 30px;
-  }
- 
-.sideTitle{
-        margin-top: 10%;
-        font-size:150%;
+    color: #f1f1f1;
+}
+
+.sideTitle {
+    margin-top: 10%;
+    font-size: 150%;
+    color: #a6dcef; /* Light blue for emphasis */
+}
+
+/* Add a subtle shadow effect for depth */
+.side-nav, .toggle, .nav-content {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+}
 
 
+.auth{
+    color: aqua;
 }
