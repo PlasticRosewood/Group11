@@ -134,7 +134,6 @@ function ProfilePage() {
           <p>No top games available.</p>
         )}
       </div>
-
       {/* Top 3 Movies Section */}
       <div className="history-container">
         <h2>Top 3 Movies</h2>
