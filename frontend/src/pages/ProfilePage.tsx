@@ -32,14 +32,14 @@ function ProfilePage() {
     const fetchProfileData = async () => {
       try {
 
-        const profileResponse = await fetch(`/api/returnAllMembersForUser?userId=${user.id}&genre=Game`);
+        const profileResponse = await fetch(`https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`);
         const profileData = await profileResponse.json();
 
         const favoriteGame = profileData.results[0] || ''; 
         const favoriteMovie = profileData.results[1] || ''; 
 
         // Fetch game history
-        const gameHistoryResponse = await fetch(`/api/returnAllMembersForUser?userId=${user.id}&genre=Game`);
+        const gameHistoryResponse = await fetch(`https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`);
         const gameHistoryData = await gameHistoryResponse.json();
         const gameHistory = gameHistoryData.results || [];
 
