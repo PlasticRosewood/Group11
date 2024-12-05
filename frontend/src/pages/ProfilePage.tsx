@@ -16,7 +16,7 @@ function ProfilePage() {
   const navigate = useNavigate();
 
   const [profileData, setProfileData] = useState({
-    username: '',  // User ID will be shown here
+    username: '',
     favoriteGame: '',
     favoriteMovie: '',
     gameHistory: [] as GameHistory[],
@@ -35,10 +35,10 @@ function ProfilePage() {
   }
 
   useEffect(() => {
-    const fetchProfileData = async () => {
+    const fetchGameData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/returnAllMembersForUser?userId=${user.id}`
+          `http://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`
         );
 
         if (!response.ok) {
@@ -46,49 +46,73 @@ function ProfilePage() {
         }
 
         const data = await response.json();
-        console.log('API Response:', data);
-
         if (!Array.isArray(data.results)) {
           console.error('Unexpected API response structure:', data);
           return;
         }
 
-        // Separate games and movies based on genre
-        const gameHistory: GameHistory[] = data.results.filter((item: any) => item.genre === 'Game').map((item: any) => ({
+        const gameHistory: GameHistory[] = data.results.map((item: any) => ({
           name: item.name,
           date: item.date || 'Unknown Date',
           score: item.score || 'No Score',
         }));
 
-        const movieHistory: GameHistory[] = data.results.filter((item: any) => item.genre === 'Movie').map((item: any) => ({
-          name: item.name,
-          date: item.date || 'Unknown Date',
-          score: item.score || 'No Score',
-        }));
+        const sortedGameHistory = gameHistory.sort(
+          (a, b) => (parseInt(b.score) || 0) - (parseInt(a.score) || 0)
+        );
 
-        // Sort games and movies by score to get the highest scoring ones
-        const sortedGameHistory = gameHistory.sort((a, b) => (parseInt(b.score) || 0) - (parseInt(a.score) || 0));
-        const sortedMovieHistory = movieHistory.sort((a, b) => (parseInt(b.score) || 0) - (parseInt(a.score) || 0));
-
-        // Get the highest scoring game and movie
         const favoriteGame = sortedGameHistory.length > 0 ? sortedGameHistory[0].name : 'N/A';
-        const favoriteMovie = sortedMovieHistory.length > 0 ? sortedMovieHistory[0].name : 'N/A';
 
-        setProfileData({
-          username: user.id,  // Show the user ID as the username
+        setProfileData((prevData) => ({
+          ...prevData,
           favoriteGame,
-          favoriteMovie,
-          gameHistory,
-          movieHistory,
-        });
+          gameHistory: sortedGameHistory,
+        }));
       } catch (error) {
-        console.error('Error fetching profile data:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching game data:', error);
       }
     };
 
-    fetchProfileData();
+    const fetchMovieData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Movie`
+        );
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data.results)) {
+          console.error('Unexpected API response structure:', data);
+          return;
+        }
+
+        const movieHistory: GameHistory[] = data.results.map((item: any) => ({
+          name: item.name,
+          date: item.date || 'Unknown Date',
+          score: item.score || 'No Score',
+        }));
+
+        const sortedMovieHistory = movieHistory.sort(
+          (a, b) => (parseInt(b.score) || 0) - (parseInt(a.score) || 0)
+        );
+
+        const favoriteMovie = sortedMovieHistory.length > 0 ? sortedMovieHistory[0].name : 'N/A';
+
+        setProfileData((prevData) => ({
+          ...prevData,
+          favoriteMovie,
+          movieHistory: sortedMovieHistory,
+        }));
+      } catch (error) {
+        console.error('Error fetching movie data:', error);
+      }
+    };
+
+    fetchGameData();
+    fetchMovieData();
   }, [user]);
 
   if (loading) {
