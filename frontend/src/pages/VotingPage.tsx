@@ -45,6 +45,7 @@ function VotingPage() {
       console.log(`userId: ${userId} and genre: ${genre}`);  
   
       
+       
       const response = await fetch(`http://localhost:5000/api/returnAllMembers?genre=${genre}`);
       
       if (!response.ok) {
@@ -200,20 +201,20 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
     console.log(`Round ${round + 1}`);
     
     if (leftDeck.length === 0 && rightDeck.length === 0) {
-      const result = await getAllUserScores(genre); // Calling only when round ends
+      const result = await getAllUserScores(genre); // calling only when round ends
   
       const scores = result[`${genre}Scores`];
   
-      // Identify the winning card (index)
-      const winnerIndex = scores.indexOf(4); // The winning score is 4
+      //identify the winning card (index)
+      const winnerIndex = scores.indexOf(4); //the winning score is 4
       if (winnerIndex >= 0) {
         console.log(`Winning card index: ${winnerIndex}`);
   
-        // Call getGenreNames to retrieve the name of the winning item
-        const advancingCards = await getGenreNames(genre); // Get names associated with advancing cards
+        
+        const advancingCards = await getGenreNames(genre); 
   
-        // Get the name of the winning card using the winnerIndex
-        const winnerName = advancingCards[winnerIndex].Name; // Ensure the name is available
+       
+        const winnerName = advancingCards[winnerIndex].Name; 
         console.log(`The winning card is: ${winnerName}`);
         
         setWinnerName(winnerName);
@@ -222,7 +223,7 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
         return;
       }
   
-      // Filter advancing cards to move to the next round
+   
       const advancingCards = scores
         .map((score: number, index: number) => (score === round ? index : -1))
         .filter((cardId: number) => cardId !== -1);
@@ -236,7 +237,7 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
         setLeftDeck(newLeftDeck);
         setRightDeck(newRightDeck);
         setStartAnimations(true);
-        setRound((prev) => prev + 1); // Increment round
+        setRound((prev) => prev + 1);
       }, 500);
     }
   };
