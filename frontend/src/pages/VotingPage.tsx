@@ -230,7 +230,6 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
           }}
           onClick={() => handleCardClick(deckType, cardId)}
         >
-          Card {cardId}
         </div>
       );
     });
