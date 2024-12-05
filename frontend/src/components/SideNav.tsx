@@ -51,10 +51,12 @@ function SideNav ({ onToggle, disableToggle } : SideNavProps) {
                         LeaderBoard
                         </Link>
                     </li>
-                    <li className="auth">
-                        <Link to="/login">
-                        Signup/Login : Sign Out
-                        </Link>
+                    <li className="auth" onClick={
+                        () => {
+                            localStorage.clear();
+                            window.location.href = '/login';
+                        }}>
+                        Sign Out
                     </li> {/* depending on authentication */}
                 </ul>
             </div>
