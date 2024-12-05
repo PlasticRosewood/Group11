@@ -182,7 +182,7 @@ app.get('/api/searchItem', async (req, res, next) => { //TODO: TEST FOR MULTIPLE
 });
 
 //Get the searched item from the given genre
-app.get('/api/searchItemById', async (req, res, next) => { //TODO: TEST FOR MULTIPLE MATCHES
+app.get('/api/searchItemById', async (req, res, next) => { 
     // incoming: id, genre
     // outgoing: message, results[] || message, error
 
@@ -193,6 +193,8 @@ app.get('/api/searchItemById', async (req, res, next) => { //TODO: TEST FOR MULT
         return res.status(400).json({ message: 'Searched id is required.', error });
     }
 
+    const id_num = Number(id);
+
     if (genre != "Game" && genre != "Movie") {
         return res.status(400).json({ message: 'Enter a valid genre.', error });
     }
@@ -200,10 +202,10 @@ app.get('/api/searchItemById', async (req, res, next) => { //TODO: TEST FOR MULT
     try {
         let results;
         if (genre == "Game") {
-            results = await db.gamesDB.find({ "GameID": id }).toArray();
+            results = await db.gamesDB.find({ "GameID": id_num }).toArray();
             return res.status(200).json({ message: 'Game(s) found successfully', results });
         } else {
-            results = await db.moviesDB.find({ "MovieID": id }).toArray();
+            results = await db.moviesDB.find({ "MovieID": id_num }).toArray();
             return res.status(200).json({ message: 'Movie(s) found successfully', results });
         }
     } catch (e) {
