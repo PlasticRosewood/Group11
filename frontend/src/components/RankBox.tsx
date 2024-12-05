@@ -6,6 +6,7 @@ interface RankBoxProps {
     userRank: number;
     globalRank: number;
     coverArtSrc: string;
+    id: string; // for html
 }
 
 function RankBox({ name, userRank, globalRank, coverArtSrc }: RankBoxProps) {

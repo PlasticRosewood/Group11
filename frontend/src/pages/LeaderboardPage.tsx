@@ -21,8 +21,8 @@ function LeaderboardPage() {
     const [ userMovieScores, setUserMovieScores ] = useState<number[]>([]); // index is GameID, val @ index is User Rank
     const [ movieLeaderboard, setMovieLeaderboard ] =  useState<(JSX.Element | null)[]>([]); // holds the react elements
     const [ gameLeaderboard, setGameLeaderboard ] =  useState<(JSX.Element | null)[]>([]); // holds the react elements
-    const [showGames, setShowGames] = useState(true);
-    const [showMovies, setShowMovies] = useState(true);
+
+    const [ searchQuery, setSearchQuery ] = useState('');
 
     // class for storing temporary leaderboard objects
     class LeaderboardItem {
@@ -225,6 +225,7 @@ function LeaderboardPage() {
           userRank={userGameScores[item.itemId]}
           globalRank={globalGameScores[item.itemId]}
           coverArtSrc={baseGamePath + item.coverArtSrc}
+          id={'G' + item.itemId.toString()}
         />
       ));
 
@@ -236,6 +237,7 @@ function LeaderboardPage() {
           userRank={userMovieScores[item.itemId]}
           globalRank={globalMovieScores[item.itemId]}
           coverArtSrc={baseMoviePath + item.coverArtSrc}
+          id={'G' + item.itemId.toString()}
         />
       ));
 
@@ -246,7 +248,16 @@ function LeaderboardPage() {
       setMovieLeaderboard(movieRankBoxes);
     }, [triggerRender]);
 
+    function jumpToItem() {
+      const allItems = [...tempGameLeaderboardRef.current, ...tempMovieLeaderboardRef.current];
+      const foundItem = allItems.find(item => item.name.toLowerCase() === searchQuery.toLowerCase());
 
+      if (foundItem) {
+
+    } else {
+        alert('Item not found');
+      }
+    }
 
 
 
@@ -254,13 +265,13 @@ function LeaderboardPage() {
     return (
         <>
         <div id="leaderboardContainer">
-          <div id="gameLeaderboard" className="leaderboardSubsection">
-            <h1>GAME LEADERBOARD:</h1>
-            {showGames && <div className="itemsList scrollable">{gameLeaderboard}</div>}
-          </div>
           <div id="movieLeaderboard" className="leaderboardSubsection">
             <h1>MOVIE LEADERBOARD:</h1>
-            {showMovies && <div className="itemsList scrollable">{movieLeaderboard}</div>}
+            <div className="itemsList scrollable">{movieLeaderboard}</div>
+          </div>
+          <div id="gameLeaderboard" className="leaderboardSubsection">
+            <h1>GAME LEADERBOARD:</h1>
+            <div className="itemsList scrollable">{gameLeaderboard}</div>
           </div>
         </div>
         </>

@@ -44,6 +44,10 @@ body {
 
 }
 
+input {
+  background-color: #090909 !important;
+}
+
 @keyframes scrollUp {
   0% {
     transform: translateY(0);
@@ -68,6 +72,7 @@ body {
   display: flex;
   justify-content: center; 
   align-items: flex-start;
+  color: black !important;
 }
 .form-container {
   
