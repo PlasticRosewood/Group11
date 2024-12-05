@@ -41,7 +41,7 @@ function ProfilePage() {
     const fetchGameData = async () => {
       try {
         const response_members = await fetch(
-          'http://localhost:5001/api/returnAllMembers?genre=Game'
+          'http://localhost:5000/api/returnAllMembers?genre=Game'
         );
         const member_data = await response_members.json();
         console.log('Fetched game data:', member_data);
@@ -67,7 +67,7 @@ function ProfilePage() {
     const fetchMovieData = async () => {
       try {
         const response_members = await fetch(
-          'http://localhost:5001/api/returnAllMembers?genre=Movie'
+          'http://localhost:5000/api/returnAllMembers?genre=Movie'
         );
         const member_data = await response_members.json();
         console.log('Fetched movie data:', member_data);
