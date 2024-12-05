@@ -15,7 +15,7 @@ function VotingPage() {
   const [cardPoints, setCardPoints] = useState<{ [key: number]: number }>({}); 
   const [round, setRound] = useState(1); //tracking current round, since we have 16 cards total and 8 cards on each side, should be 4 rounds bc 8v8 4v4 2v2 1v1
   const [winnerName, setWinnerName] = useState('');
-  const [cardNames, setCardNames] = useState<{ [key: number]: string }>({}); 
+  
   const { user } = useUser(); //access the logged-in user's information
 
    const initialDeck = Array.from({ length: 16 }, (_, i) => i); /* cool mapping, array 1-16 */
@@ -34,30 +34,30 @@ function VotingPage() {
   const [leftDeck, setLeftDeck] = useState(initialLeftDeck); 
   const [rightDeck, setRightDeck] = useState(initialRightDeck);
 
-  const getGenreNames = async (genre: string) => {
+  const getGenreNames = async (genre: string) => { /* takes in useriD and genre */
     const userId = user?.id;
     if (!userId) {
-      console.error('Issue with userId');
+      console.error('useriD issue');
       return [];
     }
   
     try {
-      console.log(`Fetching card names for userId: ${userId} and Genre: ${genre}`); // Log userId and genre
+      console.log(`userId: ${userId} and genre: ${genre}`);  
   
-      // Updated API endpoint for returnAllMembers, only passing genre
+      
       const response = await fetch(`http://localhost:5000/api/returnAllMembers?genre=${genre}`);
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Failed to get card names: ', response.status, 'Response:', errorText);
+        console.error('could not get card names: ', response.status, 'Response:', errorText);
         return [];
       }
   
       const result = await response.json();
-      console.log('Fetched card names:', result);
+      console.log('card names:', result);
   
-      // Assuming the result contains a 'results' array with the card names
-      return result.results || []; // Return the array of cards (or an empty array if not found)
+      
+      return result.results || []; 
   
     } catch (error) {
       console.error('getGenreNames error: ', error);
@@ -262,8 +262,6 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
           }}
           onClick={() => handleCardClick(deckType, cardId)}
         >
-
-          <div className="card-name"></div>
         </div>
       );
     });
