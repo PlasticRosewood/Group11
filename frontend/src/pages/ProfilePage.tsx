@@ -18,36 +18,59 @@ function ProfilePage() {
     username: '',
     favoriteGame: '',
     favoriteMovie: '',
-    gameHistory: [] as GameHistory[] // Specify the correct type here
+    gameHistory: [] as GameHistory[], // Specify the correct type here
   });
 
   const [loading, setLoading] = useState(true);
 
   if (!user) {
-    return <h1>You are not logged in, please return to the <a onClick={() => navigate('/login')}>login page</a></h1>;
+    return (
+      <h1>
+        You are not logged in. Please return to the{' '}
+        <a onClick={() => navigate('/login')}>login page</a>.
+      </h1>
+    );
   }
 
   useEffect(() => {
-
     const fetchProfileData = async () => {
       try {
+        // Fetch all games for the user
+        const gameResponse = await fetch(
+          `https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`
+        );
+        const gameData = await gameResponse.json();
 
-        const profileResponse = await fetch(`https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`);
-        const profileData = await profileResponse.json();
+        // Filter the data to get favorite game
+        const favoriteGame = gameData.results?.[0]?.name || 'N/A';
 
-        const favoriteGame = profileData.results[0] || ''; 
-        const favoriteMovie = profileData.results[1] || ''; 
+        // Fetch all movies for the user
+        const movieResponse = await fetch(
+          `https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Movie`
+        );
+        const movieData = await movieResponse.json();
+
+        // Filter the data to get favorite movie
+        const favoriteMovie = movieData.results?.[0]?.name || 'N/A';
 
         // Fetch game history
-        const gameHistoryResponse = await fetch(`https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`);
+        const gameHistoryResponse = await fetch(
+          `https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`
+        );
         const gameHistoryData = await gameHistoryResponse.json();
-        const gameHistory = gameHistoryData.results || [];
+
+        // Transform game history data into the correct format
+        const gameHistory = gameHistoryData.results?.map((game: any) => ({
+          name: game.name,
+          date: game.date || 'Unknown Date',
+          score: game.score || 'No Score',
+        })) || [];
 
         setProfileData({
           username: user.username,
           favoriteGame,
           favoriteMovie,
-          gameHistory
+          gameHistory,
         });
       } catch (error) {
         console.error('Error fetching profile data:', error);
@@ -90,7 +113,9 @@ function ProfilePage() {
           <ul className="history-list">
             {gameHistory.map((game, index) => (
               <li key={index} className="history-item">
-                <span className="game-name"><strong>{game.name}</strong></span>
+                <span className="game-name">
+                  <strong>{game.name}</strong>
+                </span>
                 <span className="game-details">Date: {game.date}</span>
                 <span className="game-score">Score: {game.score}</span>
               </li>
