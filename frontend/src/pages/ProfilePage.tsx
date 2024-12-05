@@ -36,43 +36,42 @@ function ProfilePage() {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        // Determine the genre (defaults to "Game" if undefined)
         const genre = location.state?.genre || 'Game';
-
-        // Single API call to fetch all data
         const response = await fetch(
           `http://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=${genre}`
         );
+  
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+  
         const data = await response.json();
-
-        if (!data.results) {
-          console.error('No results found in API response');
+        console.log('API Response:', data);
+  
+        if (!Array.isArray(data.results)) {
+          console.error('Unexpected API response structure:', data);
           return;
         }
-
-        // Process the results to find favorite game, favorite movie, and game history
+  
         const gameHistory: GameHistory[] = data.results.map((item: any) => ({
           name: item.name,
           date: item.date || 'Unknown Date',
           score: item.score || 'No Score',
         }));
-
-        // Sort items by score to find the highest rated game/movie
+  
         const sortedResults = [...data.results].sort(
           (a: any, b: any) => (b.score || 0) - (a.score || 0)
         );
-
+  
         const favoriteGame =
           genre === 'Game'
-            ? sortedResults.find((item: any) => item.genre === 'Game')?.name ||
-              'N/A'
+            ? sortedResults.find((item: any) => item.genre === 'Game')?.name || 'N/A'
             : 'N/A';
         const favoriteMovie =
           genre === 'Movie'
-            ? sortedResults.find((item: any) => item.genre === 'Movie')?.name ||
-              'N/A'
+            ? sortedResults.find((item: any) => item.genre === 'Movie')?.name || 'N/A'
             : 'N/A';
-
+  
         setProfileData({
           username: user.username,
           favoriteGame,
@@ -85,9 +84,10 @@ function ProfilePage() {
         setLoading(false);
       }
     };
-
+  
     fetchProfileData();
   }, [user, location.state?.genre]);
+  
 
   if (loading) {
     return <p>Loading...</p>;
