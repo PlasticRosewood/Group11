@@ -12,6 +12,40 @@
   font-family: Arial, sans-serif;
 }
 
+.right-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers the content horizontally */
+  gap: 20px; /* Adds space between each section */
+  padding: 20px;
+}
+
+/* Left Container (Sidebar) */
+.leftContainer {
+  position: fixed;        /* Stick to the left side */
+  top: 0;
+  left: 0;
+  height: 100vh;          /* Full height of the viewport */
+  background-color: #333; /* Adjust to desired background color */
+  transition: transform 0.3s ease; /* Smooth transition for transform */
+  transform: translateX(-100%); /* Initially collapsed (off-screen) */
+  z-index: 400;
+}
+
+/* Expanded State */
+.leftContainer.expanded {
+  transform: translateX(0); /* Bring sidebar into view */
+  width: 250px;             /* Adjust width for expanded state */
+}
+
+/* Collapsed State */
+.leftContainer.collapsed {
+  transform: translateX(-100%); /* Sidebar completely hidden */
+  width: 60px;                /* Adjust width for collapsed state */
+}
+
+
+
 /* Profile Picture Placeholder */
 .profile-picture-placeholder {
   background: linear-gradient(135deg, #ff9800, #4caf50); 
@@ -28,76 +62,7 @@
   margin: 0;
 }
 
-.profile-bio {
-  margin-top: 10px;
-  font-size: 1rem;
-  color: #ddd;
-  font-style: italic;
-}
-
-/* Profile Footer */
-.profile-footer {
-  background-color: #222; 
-  padding: 15px;
-  font-size: 0.9rem;
-}
-
-.profile-footer-item {
-  margin: 5px 0;
-  color: #ff9800; 
-}
-
-  
-  /* Sidebar (fixed width) */
-  .sidenav-container {
-    width: 250px;  
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;  
-    background-color: #222;  
-  }
-  
-  /* Main content section */
-  .content-container {
-    flex-grow: 1; 
-    display: flex;
-    justify-content: center; 
-    align-items: center;      
-    padding: 20px;
-    background-color: #1b1b1b; 
-  }
-  
-  /* Profile Wrapper (to limit content width) */
-  .profile-wrapper {
-    width: 100%;
-    max-width: 800px;  
-    text-align: center;
-    color: white;       
-  }
-  
-  /* Profile Header */
-  .profile-header h1 {
-    font-size: 2.5rem;
-    margin: 0;
-  }
-  
-  /* Bio Section */
-  .profile-bio {
-    margin-bottom: 20px;
-    font-size: 1.2rem;
-    font-style: italic;
-  }
-  
-  /* Favorites Section */
-  .favorites-container {
-    margin-bottom: 30px;
-    font-size: 1.1rem;
-  }
-  
-  .favorites-container strong {
-    color: #ff9800; 
-  }
-  
+ 
   /* Game History Section */
   .history-container {
     margin-top: 20px;
@@ -137,6 +102,12 @@
   
   .game-score {
     font-size: 1rem;
+    color: #4caf50;
+    font-weight: bold;
+  }
+
+  .movie-score{
+       font-size: 1rem;
     color: #4caf50;
     font-weight: bold;
   }

@@ -1,26 +1,29 @@
 import './ProfilePage.css';
 import { useState, useEffect } from 'react';
 import { useUser } from '../UserContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SideNav from '../components/SideNav';
 
 interface GameHistory {
-  name: string;
-  date: string;
-  score: string;
+  GameID: number;
+  Name: string;
+  GlobalScore: number;
+}
+
+interface MovieHistory {
+  MovieID: number;
+  Name: string;
+  GlobalScore: number;
 }
 
 function ProfilePage() {
-  const location = useLocation();
   const { user } = useUser();
   const navigate = useNavigate();
 
   const [profileData, setProfileData] = useState({
     username: '',
-    favoriteGame: '',
-    favoriteMovie: '',
-    gameHistory: [] as GameHistory[],
-    movieHistory: [] as GameHistory[],
+    topGames: [] as GameHistory[],
+    topMovies: [] as MovieHistory[],
   });
 
   const [loading, setLoading] = useState(true);
@@ -37,37 +40,25 @@ function ProfilePage() {
   useEffect(() => {
     const fetchGameData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`
+        const response_members = await fetch(
+          'http://localhost:5000/api/returnAllMembers?genre=Game'
         );
+        const member_data = await response_members.json();
+        console.log('Fetched game data:', member_data);
 
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        if (Array.isArray(member_data.results)) {
+          // Sort by GlobalScore in descending order and get top 3 games
+          const sortedGames = member_data.results
+            .sort((a: GameHistory, b: GameHistory) => b.GlobalScore - a.GlobalScore)
+            .slice(0, 3);
+
+          setProfileData((prevData) => ({
+            ...prevData,
+            topGames: sortedGames,
+          }));
+        } else {
+          console.error('Fetched game data is not an array:', member_data.results);
         }
-
-        const data = await response.json();
-        if (!Array.isArray(data.results)) {
-          console.error('Unexpected API response structure:', data);
-          return;
-        }
-
-        const gameHistory: GameHistory[] = data.results.map((item: any) => ({
-          name: item.name,
-          date: item.date || 'Unknown Date',
-          score: item.score || 'No Score',
-        }));
-
-        const sortedGameHistory = gameHistory.sort(
-          (a, b) => (parseInt(b.score) || 0) - (parseInt(a.score) || 0)
-        );
-
-        const favoriteGame = sortedGameHistory.length > 0 ? sortedGameHistory[0].name : 'N/A';
-
-        setProfileData((prevData) => ({
-          ...prevData,
-          favoriteGame,
-          gameHistory: sortedGameHistory,
-        }));
       } catch (error) {
         console.error('Error fetching game data:', error);
       }
@@ -75,37 +66,25 @@ function ProfilePage() {
 
     const fetchMovieData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Movie`
+        const response_members = await fetch(
+          'http://localhost:5000/api/returnAllMembers?genre=Movie'
         );
+        const member_data = await response_members.json();
+        console.log('Fetched movie data:', member_data);
 
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        if (Array.isArray(member_data.results)) {
+          // Sort by GlobalScore in descending order and get top 3 movies
+          const sortedMovies = member_data.results
+            .sort((a: MovieHistory, b: MovieHistory) => b.GlobalScore - a.GlobalScore)
+            .slice(0, 3);
+
+          setProfileData((prevData) => ({
+            ...prevData,
+            topMovies: sortedMovies,
+          }));
+        } else {
+          console.error('Fetched movie data is not an array:', member_data.results);
         }
-
-        const data = await response.json();
-        if (!Array.isArray(data.results)) {
-          console.error('Unexpected API response structure:', data);
-          return;
-        }
-
-        const movieHistory: GameHistory[] = data.results.map((item: any) => ({
-          name: item.name,
-          date: item.date || 'Unknown Date',
-          score: item.score || 'No Score',
-        }));
-
-        const sortedMovieHistory = movieHistory.sort(
-          (a, b) => (parseInt(b.score) || 0) - (parseInt(a.score) || 0)
-        );
-
-        const favoriteMovie = sortedMovieHistory.length > 0 ? sortedMovieHistory[0].name : 'N/A';
-
-        setProfileData((prevData) => ({
-          ...prevData,
-          favoriteMovie,
-          movieHistory: sortedMovieHistory,
-        }));
       } catch (error) {
         console.error('Error fetching movie data:', error);
       }
@@ -115,70 +94,72 @@ function ProfilePage() {
     fetchMovieData();
   }, [user]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  const { username, favoriteGame, favoriteMovie, gameHistory, movieHistory } = profileData;
+  const { username, topGames, topMovies } = profileData;
+  const [isExpanded, setIsExpanded] = useState(false); //side nav visibility
 
   return (
     <div className="profile-container">
+            <div className={`leftContainer ${isExpanded ? 'expanded' : 'collapsed'}`}>
+        <SideNav onToggle={setIsExpanded} />
+      </div>
+      <div className='right-container'>
       <div className="profile-card-new">
         <div className="profile-picture-placeholder">
           {/* Add profile picture logic here */}
         </div>
         <div className="profile-content">
-          <h1 className="profile-username">{username}</h1>
-        </div>
-        <div className="profile-footer">
-          <div className="profile-footer-item">
-            <strong>Favorite Game:</strong> {favoriteGame}
-          </div>
-          <div className="profile-footer-item">
-            <strong>Favorite Movie:</strong> {favoriteMovie}
-          </div>
+          <h1 className="profile-username">{user.username}</h1>
         </div>
       </div>
+
+      {/* Top 3 Games Section */}
       <div className="history-container">
-        <h2>Game History</h2>
+        <h2>Top 3 Games</h2>
         <hr />
-        {gameHistory.length > 0 ? (
+        {topGames.length > 0 ? (
           <ul className="history-list">
-            {gameHistory.map((game, index) => (
-              <li key={index} className="history-item">
-                <span className="game-name">
-                  <strong>{game.name}</strong>
+            {topGames.map((game, index) => (
+              <li key={game.GameID} className="history-item">
+                <span className="game-rank">
+                  <strong>{index + 1}. </strong>
                 </span>
-                <span className="game-details">Date: {game.date}</span>
-                <span className="game-score">Score: {game.score}</span>
+                <span className="game-name">
+                  <strong>{game.Name}</strong>
+                </span>
+                <span className="game-score">Score: {game.GlobalScore}</span>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No game history available.</p>
+          <p>No top games available.</p>
         )}
       </div>
 
+      {/* Top 3 Movies Section */}
       <div className="history-container">
-        <h2>Movie History</h2>
+        <h2>Top 3 Movies</h2>
         <hr />
-        {movieHistory.length > 0 ? (
+        {topMovies.length > 0 ? (
           <ul className="history-list">
-            {movieHistory.map((movie, index) => (
-              <li key={index} className="history-item">
-                <span className="game-name">
-                  <strong>{movie.name}</strong>
+            {topMovies.map((movie, index) => (
+              <li key={movie.MovieID} className="history-item">
+                <span className="movie-rank">
+                  <strong>{index + 1}. </strong>
                 </span>
-                <span className="game-details">Date: {movie.date}</span>
-                <span className="game-score">Score: {movie.score}</span>
+                <span className="movie-name">
+                  <strong>{movie.Name}</strong>
+                </span>
+                <span className="movie-score">Score: {movie.GlobalScore}</span>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No movie history available.</p>
+          <p>No top movies available.</p>
         )}
       </div>
     </div>
+      </div>
+     
   );
 }
 
