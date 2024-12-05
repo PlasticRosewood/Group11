@@ -1,55 +1,154 @@
 import './ProfilePage.css';
 import { useState, useEffect } from 'react';
 import { useUser } from '../UserContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import SideNav from '../components/SideNav';
 
+interface GameHistory {
+  name: string;
+  date: string;
+  score: string;
+}
 
 function ProfilePage() {
+  const location = useLocation();
   const { user } = useUser();
   const navigate = useNavigate();
 
+  const [profileData, setProfileData] = useState({
+    username: '',
+    favoriteGame: '',
+    favoriteMovie: '',
+    gameHistory: [] as GameHistory[],
+    movieHistory: [] as GameHistory[],
+  });
+
+  const [loading, setLoading] = useState(true);
+
   if (!user) {
-    return <h1>You are not logged in, please return to the <a onClick={() => navigate('/login')}>login page</a></h1>;
+    return (
+      <h1>
+        You are not logged in. Please return to the{' '}
+        <a onClick={() => navigate('/login')}>login page</a>.
+      </h1>
+    );
   }
 
-  // Placeholder data
-  const username = user.username;
-  const bio = "#girlboss UCF Go Knights SoFlo Java";
-  const favoriteGame = "The Legend of Zelda: Breath of the Wild";
-  const favoriteMovie = "Inception";
-  const gameHistory = [
-    { name: "Game 1", date: "2024-11-18", score: "95" },
-    { name: "Game 2", date: "2024-11-19", score: "88" },
-    { name: "Game 3", date: "2024-11-20", score: "72" },
-    { name: "Game 4", date: "2024-11-21", score: "100" },
-  ];
+  useEffect(() => {
+    const fetchGameData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`
+        );
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data.results)) {
+          console.error('Unexpected API response structure:', data);
+          return;
+        }
+
+        const gameHistory: GameHistory[] = data.results.map((item: any) => ({
+          name: item.name,
+          date: item.date || 'Unknown Date',
+          score: item.score || 'No Score',
+        }));
+
+        const sortedGameHistory = gameHistory.sort(
+          (a, b) => (parseInt(b.score) || 0) - (parseInt(a.score) || 0)
+        );
+
+        const favoriteGame = sortedGameHistory.length > 0 ? sortedGameHistory[0].name : 'N/A';
+
+        setProfileData((prevData) => ({
+          ...prevData,
+          favoriteGame,
+          gameHistory: sortedGameHistory,
+        }));
+      } catch (error) {
+        console.error('Error fetching game data:', error);
+      }
+    };
+
+    const fetchMovieData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Movie`
+        );
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data.results)) {
+          console.error('Unexpected API response structure:', data);
+          return;
+        }
+
+        const movieHistory: GameHistory[] = data.results.map((item: any) => ({
+          name: item.name,
+          date: item.date || 'Unknown Date',
+          score: item.score || 'No Score',
+        }));
+
+        const sortedMovieHistory = movieHistory.sort(
+          (a, b) => (parseInt(b.score) || 0) - (parseInt(a.score) || 0)
+        );
+
+        const favoriteMovie = sortedMovieHistory.length > 0 ? sortedMovieHistory[0].name : 'N/A';
+
+        setProfileData((prevData) => ({
+          ...prevData,
+          favoriteMovie,
+          movieHistory: sortedMovieHistory,
+        }));
+      } catch (error) {
+        console.error('Error fetching movie data:', error);
+      }
+    };
+
+    fetchGameData();
+    fetchMovieData();
+  }, [user]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  const { username, favoriteGame, favoriteMovie, gameHistory, movieHistory } = profileData;
 
   return (
-  <div className="profile-container">
-  <div className="profile-card-new">
-    <div className="profile-picture-placeholder">
-    </div>
-    <div className="profile-content">
-      <h1 className="profile-username">{username}</h1>
-      <p className="profile-bio">{bio}</p>
-    </div>
-    <div className="profile-footer">
-      <div className="profile-footer-item">
-        <strong>Favorite Game:</strong> {favoriteGame}
+    <div className="profile-container">
+      <div className="profile-card-new">
+        <div className="profile-picture-placeholder">
+          {/* Add profile picture logic here */}
+        </div>
+        <div className="profile-content">
+          <h1 className="profile-username">{username}</h1>
+        </div>
+        <div className="profile-footer">
+          <div className="profile-footer-item">
+            <strong>Favorite Game:</strong> {favoriteGame}
+          </div>
+          <div className="profile-footer-item">
+            <strong>Favorite Movie:</strong> {favoriteMovie}
+          </div>
+        </div>
       </div>
-      <div className="profile-footer-item">
-        <strong>Favorite Movie:</strong> {favoriteMovie}
-      </div>
-    </div>
-  </div>
-  <div className="history-container">
+      <div className="history-container">
         <h2>Game History</h2>
         <hr />
         {gameHistory.length > 0 ? (
           <ul className="history-list">
             {gameHistory.map((game, index) => (
               <li key={index} className="history-item">
-                <span className="game-name"><strong>{game.name}</strong></span>
+                <span className="game-name">
+                  <strong>{game.name}</strong>
+                </span>
                 <span className="game-details">Date: {game.date}</span>
                 <span className="game-score">Score: {game.score}</span>
               </li>
@@ -59,8 +158,27 @@ function ProfilePage() {
           <p>No game history available.</p>
         )}
       </div>
+
+      <div className="history-container">
+        <h2>Movie History</h2>
+        <hr />
+        {movieHistory.length > 0 ? (
+          <ul className="history-list">
+            {movieHistory.map((movie, index) => (
+              <li key={index} className="history-item">
+                <span className="game-name">
+                  <strong>{movie.name}</strong>
+                </span>
+                <span className="game-details">Date: {movie.date}</span>
+                <span className="game-score">Score: {movie.score}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No movie history available.</p>
+        )}
+      </div>
     </div>
-      
   );
 }
 

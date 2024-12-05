@@ -10,9 +10,12 @@ function VotingPage() {
 
   const [isExpanded, setIsExpanded] = useState(false); //side nav visibility
   const [showPopup, setShowPopup] = useState(true); // popup visibility
+  const [showReturnPopup, setShowReturnPopup] = useState(false);
   const [startAnimations, setStartAnimations] = useState(false); // delay animation start
   const [cardPoints, setCardPoints] = useState<{ [key: number]: number }>({}); 
   const [round, setRound] = useState(1); //tracking current round, since we have 16 cards total and 8 cards on each side, should be 4 rounds bc 8v8 4v4 2v2 1v1
+  const [winnerName, setWinnerName] = useState('');
+  
   const { user } = useUser(); //access the logged-in user's information
 
    const initialDeck = Array.from({ length: 16 }, (_, i) => i); /* cool mapping, array 1-16 */
@@ -31,60 +34,149 @@ function VotingPage() {
   const [leftDeck, setLeftDeck] = useState(initialLeftDeck); 
   const [rightDeck, setRightDeck] = useState(initialRightDeck);
 
-  const incrementCardPoints = async (cardId: number, genre: string) => { /* note that genre is upper and singular */
-    const userId = '674e2884151cfd68e8416ee6'; // hardcoded user ID for testing
-    
+  const getGenreNames = async (genre: string) => { /* takes in useriD and genre */
+    const userId = user?.id;
     if (!userId) {
-      console.error('User ID is not available:', userId);
-      return;
+      console.error('useriD issue');
+      return [];
     }
   
-    console.log('User ID:', userId); 
-    console.log('Genre being sent to API:', genre);
-    
     try {
-      const response = await fetch('/api/updateUserItemWins', {
+      console.log(`userId: ${userId} and genre: ${genre}`);  
+  
+      
+       
+      const response = await fetch(`http://localhost:5000/api/returnAllMembers?genre=${genre}`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('could not get card names: ', response.status, 'Response:', errorText);
+        return [];
+      }
+  
+      const result = await response.json();
+      console.log('card names:', result);
+  
+      
+      return result.results || []; 
+  
+    } catch (error) {
+      console.error('getGenreNames error: ', error);
+      return [];
+    }
+  };
+  
+  const resetUserWins = async () => { /* requires id and genre */
+    const userId = user?.id;
+    if (!userId) {
+      console.error('User iD not found');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/resetUserWins`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           userId: userId,
-          itemId: cardId,
           genre: genre,
-          points: 1,
         }),
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Failed to increment points: Status:', response.status, 'Response:', errorText);
+        console.error('Could not fetch properly', response.status, 'response type:', errorText);
         return;
       }
-  
-      try {
-        const result = await response.json();
-        console.log('Server Response:', result);
-      } catch (jsonError) {
-        console.error('Error parsing JSON response:', jsonError);
-      }
-  
-      setCardPoints((prevPoints) => {
-        const updatedPoints = { ...prevPoints };
-        updatedPoints[cardId] = (updatedPoints[cardId] || 0) + 1;
-        console.log(`Card ${cardId} updated locally. Total points: ${updatedPoints[cardId]}`);
-        return updatedPoints;
-      });
+
+      const result = await response.json();
+      console.log('ResetUserWins: ', result.message);
     } catch (error) {
-      console.error('Error incrementing card points:', error);
+      console.error('Resetting points not working:', error);
     }
-  };
+};
+
+
+const getAllUserScores = async (genre: string) => { /* requires userId and genre */
+  const userId = user?.id;
+  if (!userId) {
+    console.error('Issue with userId');
+    return;
+  }
+
+  try {
+    console.log(`User iD: ${userId} and Genre: ${genre}`);
+    
+    const response = await fetch(`http://localhost:5000/api/returnAllMembersForUser?userId=${userId}&genre=${genre}`); /* fancy query */
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Failed to get user scores: ', response.status, 'Response:', errorText);
+      return;
+    }
+
+    const result = await response.json();
+    console.log('Fetched user scores:', result.results);
+
+  
+    const advancingCards = result.results; /* wait this might be the issue, take out .advancing */
+    /* passing results, it is coming out as an object so must filter through in  next round logic  */
+    
+    return advancingCards; 
+
+  } catch (error) {
+    console.error('getAllUserScores error: ', error);
+  }
+};
+
+
+
+const incrementCardPoints = async (cardId: number, genre: string) => { /* reuires itemId, userId, genre, and how many points */
+  const userId = user?.id;
+  if (!userId) {
+    console.error('UseriD error/was not found:', userId);
+    return;
+  }
+
+  try { /* make sure to use http://localhost:5000 to make the call */
+    const response = await fetch('http://localhost:5000/api/updateUserItemWins', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId,
+        itemId: cardId,
+        genre: genre,
+        points: 1, 
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Did not increment points properly: ', response.status, 'Response:', errorText);
+      return;
+    }
+
+    const result = await response.json();
+    console.log('Response:', result);
+    
+  
+  } catch (error) {
+    console.error('nooo dont do it to me: ', error);
+  }
+};
+
   
 
   const handleCardClick = (deckType: 'left' | 'right', card: number) => { /* handles deck delection and checks for balancing */
     if (leftDeck.length === 0 || rightDeck.length === 0) return;
 
     incrementCardPoints(card, genre); 
+
+    console.log(`Card ${card} chosen from the ${deckType} deck`);
 
     if (deckType === 'left') {
       setLeftDeck((prevDeck) => prevDeck.slice(1)); //remove the clicked card
@@ -104,43 +196,64 @@ function VotingPage() {
     }
   }, [leftDeck, rightDeck]);
 
-  const moveToNextRound = () => {
+
+  const moveToNextRound = async () => {
     console.log(`Round ${round + 1}`);
-    console.log('Current Card Points:', cardPoints);
-
-    //advancing cards only if they have the points equal to the round number
-    const advancingCards = Object.entries(cardPoints)
-      .filter(([card, points]) => points === round)
-      .map(([card]) => parseInt(card));
-
-    console.log('Cards going to next round:', advancingCards);
-
-    if (round >= 4) {
-      alert('AHHH');
-      return;
+    
+    if (leftDeck.length === 0 && rightDeck.length === 0) {
+      const result = await getAllUserScores(genre); // calling only when round ends
+  
+      const scores = result[`${genre}Scores`];
+  
+      //identify the winning card (index)
+      const winnerIndex = scores.indexOf(4); //the winning score is 4
+      if (winnerIndex >= 0) {
+        console.log(`Winning card index: ${winnerIndex}`);
+  
+        
+        const advancingCards = await getGenreNames(genre); 
+  
+       
+        const winnerName = advancingCards[winnerIndex].Name; 
+        console.log(`The winning card is: ${winnerName}`);
+        
+        setWinnerName(winnerName);
+        setStartAnimations(false);
+        setShowReturnPopup(true);
+        return;
+      }
+  
+   
+      const advancingCards = scores
+        .map((score: number, index: number) => (score === round ? index : -1))
+        .filter((cardId: number) => cardId !== -1);
+  
+      console.log('Advancing cards to next round:', advancingCards);
+  
+      const { leftDeck: newLeftDeck, rightDeck: newRightDeck } = shuffleDecks(advancingCards);
+      
+      setStartAnimations(false);
+      setTimeout(() => {
+        setLeftDeck(newLeftDeck);
+        setRightDeck(newRightDeck);
+        setStartAnimations(true);
+        setRound((prev) => prev + 1);
+      }, 500);
     }
-
-    //shuffline and splitting decks evenly
-    const { leftDeck: newLeftDeck, rightDeck: newRightDeck } = shuffleDecks(advancingCards);
-
-    setStartAnimations(false);
-    setTimeout(() => {
-      setLeftDeck(newLeftDeck);
-      setRightDeck(newRightDeck);
-      setStartAnimations(true);
-      setRound((prev) => prev + 1);
-    }, 500);
   };
+  
+  
 
   //creating the decks
   const createDeck = (deckType: 'left' | 'right', deck: number[]) => {
-    return deck.map((cardId, index) => {
+    return deck.map((cardId: number, index) => { 
       const delay = `${index * 0.15}s`;
+  
       return (
         <div
           key={`${deckType}-card-${cardId}`}
           id={`card-${cardId}`}
-          className={`card ${deckType}-card card-${cardId}-${genre} ${startAnimations ? 'start-animation' : ''}`} /* added the genre abbr */
+          className={`card ${deckType}-card card-${cardId}-${genre} ${startAnimations ? 'start-animation' : ''}`}
           style={{
             zIndex: 16 - index,
             marginTop: `${index * 0.8}%`,
@@ -150,11 +263,11 @@ function VotingPage() {
           }}
           onClick={() => handleCardClick(deckType, cardId)}
         >
-          Card {cardId}
         </div>
       );
     });
   };
+  
 
   useEffect(() => {
     console.log(`This is the Round ${round}:`);
@@ -191,12 +304,26 @@ function VotingPage() {
                 onClick={() => {
                   setShowPopup(false);
                   setStartAnimations(true);
+                  resetUserWins();
                 }}
               >
                 Yes
               </button>
               <Link to="/">
                 <button>No</button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+    {showReturnPopup && (
+        <div className="popup">
+          <div className="popup-content">
+            <div className="pop-text">The winning card is: <br></br>{winnerName}</div>
+            <div className="popup-buttons">
+              <Link to="/">
+                <button>Return</button>
               </Link>
             </div>
           </div>

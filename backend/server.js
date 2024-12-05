@@ -341,10 +341,10 @@ app.get('/api/returnAllMembers', async (req, res, next) => {
         let results;
 
         if(genre == "Game") {
-            results = await db.gamesDB.find({}, { projection: { GameID: 1, GlobalScore: 1, _id: 0 } }).toArray();
+            results = await db.gamesDB.find({}, { projection: { GameID: 1, GlobalScore: 1, Name: 1, _id: 0 } }).toArray();
         }
         if(genre == "Movie") {
-            results = await db.moviesDB.find({}, { projection: { MovieID: 1, GlobalScore: 1, _id: 0 } }).toArray();
+            results = await db.moviesDB.find({}, { projection: { MovieID: 1, GlobalScore: 1, Name: 1, _id: 0 } }).toArray();
         }
 
         
