@@ -1,7 +1,7 @@
 import './ProfilePage.css';
 import { useState, useEffect } from 'react';
 import { useUser } from '../UserContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SideNav from '../components/SideNav';
 
 interface GameHistory {
@@ -11,6 +11,7 @@ interface GameHistory {
 }
 
 function ProfilePage() {
+  const location = useLocation();
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -18,7 +19,7 @@ function ProfilePage() {
     username: '',
     favoriteGame: '',
     favoriteMovie: '',
-    gameHistory: [] as GameHistory[], // Specify the correct type here
+    gameHistory: [] as GameHistory[],
   });
 
   const [loading, setLoading] = useState(true);
@@ -35,36 +36,42 @@ function ProfilePage() {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        // Fetch all games for the user
-        const gameResponse = await fetch(
-          `https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`
+        // Determine the genre (defaults to "Game" if undefined)
+        const genre = location.state?.genre || 'Game';
+
+        // Single API call to fetch all data
+        const response = await fetch(
+          `http://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=${genre}`
         );
-        const gameData = await gameResponse.json();
+        const data = await response.json();
 
-        // Filter the data to get favorite game
-        const favoriteGame = gameData.results?.[0]?.name || 'N/A';
+        if (!data.results) {
+          console.error('No results found in API response');
+          return;
+        }
 
-        // Fetch all movies for the user
-        const movieResponse = await fetch(
-          `https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Movie`
+        // Process the results to find favorite game, favorite movie, and game history
+        const gameHistory: GameHistory[] = data.results.map((item: any) => ({
+          name: item.name,
+          date: item.date || 'Unknown Date',
+          score: item.score || 'No Score',
+        }));
+
+        // Sort items by score to find the highest rated game/movie
+        const sortedResults = [...data.results].sort(
+          (a: any, b: any) => (b.score || 0) - (a.score || 0)
         );
-        const movieData = await movieResponse.json();
 
-        // Filter the data to get favorite movie
-        const favoriteMovie = movieData.results?.[0]?.name || 'N/A';
-
-        // Fetch game history
-        const gameHistoryResponse = await fetch(
-          `https://localhost:5000/api/returnAllMembersForUser?userId=${user.id}&genre=Game`
-        );
-        const gameHistoryData = await gameHistoryResponse.json();
-
-        // Transform game history data into the correct format
-        const gameHistory = gameHistoryData.results?.map((game: any) => ({
-          name: game.name,
-          date: game.date || 'Unknown Date',
-          score: game.score || 'No Score',
-        })) || [];
+        const favoriteGame =
+          genre === 'Game'
+            ? sortedResults.find((item: any) => item.genre === 'Game')?.name ||
+              'N/A'
+            : 'N/A';
+        const favoriteMovie =
+          genre === 'Movie'
+            ? sortedResults.find((item: any) => item.genre === 'Movie')?.name ||
+              'N/A'
+            : 'N/A';
 
         setProfileData({
           username: user.username,
@@ -80,7 +87,7 @@ function ProfilePage() {
     };
 
     fetchProfileData();
-  }, [user]);
+  }, [user, location.state?.genre]);
 
   if (loading) {
     return <p>Loading...</p>;
