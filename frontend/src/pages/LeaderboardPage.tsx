@@ -249,14 +249,42 @@ function LeaderboardPage() {
     }, [triggerRender]);
 
     function jumpToItem() {
-      const allItems = [...tempGameLeaderboardRef.current, ...tempMovieLeaderboardRef.current];
-      const foundItem = allItems.find(item => item.name.toLowerCase() === searchQuery.toLowerCase());
+      const searchQueryLower = searchQuery.toLowerCase();
 
-      if (foundItem) {
+      const filterLeaderboard = (leaderboard: (JSX.Element | null)[]) => {
+        return leaderboard.map((item) => {
+          if (item && item.props.name.toLowerCase().includes(searchQueryLower)) {
+        return item;
+          } else {
+        return null;
+          }
+        });
+      };
 
-    } else {
-        alert('Item not found');
-      }
+      const filteredGameLeaderboard = filterLeaderboard(tempGameLeaderboardRef.current.map((item) => (
+        <RankBox
+          key={item.itemId}
+          name={item.name}
+          userRank={userGameScores[item.itemId]}
+          globalRank={globalGameScores[item.itemId]}
+          coverArtSrc={'src/assets/games/' + item.coverArtSrc}
+          id={'G' + item.itemId.toString()}
+        />
+      )));
+
+      const filteredMovieLeaderboard = filterLeaderboard(tempMovieLeaderboardRef.current.map((item) => (
+        <RankBox
+          key={item.itemId}
+          name={item.name}
+          userRank={userMovieScores[item.itemId]}
+          globalRank={globalMovieScores[item.itemId]}
+          coverArtSrc={'src/assets/movies/' + item.coverArtSrc}
+          id={'G' + item.itemId.toString()}
+        />
+      )));
+
+      setGameLeaderboard(filteredGameLeaderboard);
+      setMovieLeaderboard(filteredMovieLeaderboard);
     }
 
 
@@ -265,6 +293,17 @@ function LeaderboardPage() {
     return (
         <>
         <div id="leaderboardContainer">
+          <div id="searchBarContainer">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => {setSearchQuery(e.target.value); jumpToItem();}}
+            />
+            <button onClick={() => { setSearchQuery(''); jumpToItem(); }}>
+              Reset Search
+            </button>
+          </div>
           <div id="movieLeaderboard" className="leaderboardSubsection">
             <h1>MOVIE LEADERBOARD:</h1>
             <div className="itemsList scrollable">{movieLeaderboard}</div>
