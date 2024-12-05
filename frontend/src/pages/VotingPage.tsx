@@ -14,8 +14,8 @@ function VotingPage() {
   const [startAnimations, setStartAnimations] = useState(false); // delay animation start
   const [cardPoints, setCardPoints] = useState<{ [key: number]: number }>({}); 
   const [round, setRound] = useState(1); //tracking current round, since we have 16 cards total and 8 cards on each side, should be 4 rounds bc 8v8 4v4 2v2 1v1
-
-  
+  const [winnerName, setWinnerName] = useState('');
+  const [cardNames, setCardNames] = useState<{ [key: number]: string }>({}); 
   const { user } = useUser(); //access the logged-in user's information
 
    const initialDeck = Array.from({ length: 16 }, (_, i) => i); /* cool mapping, array 1-16 */
@@ -34,7 +34,37 @@ function VotingPage() {
   const [leftDeck, setLeftDeck] = useState(initialLeftDeck); 
   const [rightDeck, setRightDeck] = useState(initialRightDeck);
 
-
+  const getGenreNames = async (genre: string) => {
+    const userId = user?.id;
+    if (!userId) {
+      console.error('Issue with userId');
+      return [];
+    }
+  
+    try {
+      console.log(`Fetching card names for userId: ${userId} and Genre: ${genre}`); // Log userId and genre
+  
+      // Updated API endpoint for returnAllMembers, only passing genre
+      const response = await fetch(`http://localhost:5000/api/returnAllMembers?genre=${genre}`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to get card names: ', response.status, 'Response:', errorText);
+        return [];
+      }
+  
+      const result = await response.json();
+      console.log('Fetched card names:', result);
+  
+      // Assuming the result contains a 'results' array with the card names
+      return result.results || []; // Return the array of cards (or an empty array if not found)
+  
+    } catch (error) {
+      console.error('getGenreNames error: ', error);
+      return [];
+    }
+  };
+  
   const resetUserWins = async () => { /* requires id and genre */
     const userId = user?.id;
     if (!userId) {
@@ -169,42 +199,44 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
   const moveToNextRound = async () => {
     console.log(`Round ${round + 1}`);
     
-    /* only check when decks are empty */
     if (leftDeck.length === 0 && rightDeck.length === 0) {
-      
-      const result = await getAllUserScores(genre); /* calling only when round ends */
-      
-    
-      const scores = result[`${genre}Scores`]; 
-      
-      /* if game has 4 points it wins */
-      const winnerIndex = scores.indexOf(4);
-       if (winnerIndex >= 0) {
-        console.log(`${winnerIndex}`);
+      const result = await getAllUserScores(genre); // Calling only when round ends
+  
+      const scores = result[`${genre}Scores`];
+  
+      // Identify the winning card (index)
+      const winnerIndex = scores.indexOf(4); // The winning score is 4
+      if (winnerIndex >= 0) {
+        console.log(`Winning card index: ${winnerIndex}`);
+  
+        // Call getGenreNames to retrieve the name of the winning item
+        const advancingCards = await getGenreNames(genre); // Get names associated with advancing cards
+  
+        // Get the name of the winning card using the winnerIndex
+        const winnerName = advancingCards[winnerIndex].Name; // Ensure the name is available
+        console.log(`The winning card is: ${winnerName}`);
+        
+        setWinnerName(winnerName);
         setStartAnimations(false);
         setShowReturnPopup(true);
-    
-      return;
-    }
-
-      
-      // only cards with points that equate to the current round move forward
+        return;
+      }
+  
+      // Filter advancing cards to move to the next round
       const advancingCards = scores
         .map((score: number, index: number) => (score === round ? index : -1))
         .filter((cardId: number) => cardId !== -1);
   
       console.log('Advancing cards to next round:', advancingCards);
   
-      
       const { leftDeck: newLeftDeck, rightDeck: newRightDeck } = shuffleDecks(advancingCards);
       
-     
       setStartAnimations(false);
       setTimeout(() => {
         setLeftDeck(newLeftDeck);
         setRightDeck(newRightDeck);
         setStartAnimations(true);
-        setRound((prev) => prev + 1); /* don't forget to incrmeent round */
+        setRound((prev) => prev + 1); // Increment round
       }, 500);
     }
   };
@@ -230,6 +262,8 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
           }}
           onClick={() => handleCardClick(deckType, cardId)}
         >
+
+          <div className="card-name"></div>
         </div>
       );
     });
@@ -287,7 +321,7 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
     {showReturnPopup && (
         <div className="popup">
           <div className="popup-content">
-            <div className="pop-text">Return to Main Page</div>
+            <div className="pop-text">The winning card is: <br></br>{winnerName}</div>
             <div className="popup-buttons">
               <Link to="/">
                 <button>Return</button>
