@@ -10,9 +10,12 @@ function VotingPage() {
 
   const [isExpanded, setIsExpanded] = useState(false); //side nav visibility
   const [showPopup, setShowPopup] = useState(true); // popup visibility
+  const [showReturnPopup, setShowReturnPopup] = useState(false);
   const [startAnimations, setStartAnimations] = useState(false); // delay animation start
   const [cardPoints, setCardPoints] = useState<{ [key: number]: number }>({}); 
   const [round, setRound] = useState(1); //tracking current round, since we have 16 cards total and 8 cards on each side, should be 4 rounds bc 8v8 4v4 2v2 1v1
+
+  
   const { user } = useUser(); //access the logged-in user's information
 
    const initialDeck = Array.from({ length: 16 }, (_, i) => i); /* cool mapping, array 1-16 */
@@ -162,6 +165,7 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
     }
   }, [leftDeck, rightDeck]);
 
+
   const moveToNextRound = async () => {
     console.log(`Round ${round + 1}`);
     
@@ -175,10 +179,13 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
       
       /* if game has 4 points it wins */
       const winnerIndex = scores.indexOf(4);
-      if (winnerIndex >= 0) {
-        alert(`Card ${winnerIndex} wins!`);
-        return;
-      }
+       if (winnerIndex >= 0) {
+        console.log(`${winnerIndex}`);
+        setStartAnimations(false);
+        setShowReturnPopup(true);
+    
+      return;
+    }
 
       
       // only cards with points that equate to the current round move forward
@@ -208,6 +215,7 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
   const createDeck = (deckType: 'left' | 'right', deck: number[]) => {
     return deck.map((cardId: number, index) => { 
       const delay = `${index * 0.15}s`;
+  
       return (
         <div
           key={`${deckType}-card-${cardId}`}
@@ -271,6 +279,19 @@ const incrementCardPoints = async (cardId: number, genre: string) => { /* reuire
               </button>
               <Link to="/">
                 <button>No</button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+    {showReturnPopup && (
+        <div className="popup">
+          <div className="popup-content">
+            <div className="pop-text">Return to Main Page</div>
+            <div className="popup-buttons">
+              <Link to="/">
+                <button>Return</button>
               </Link>
             </div>
           </div>
