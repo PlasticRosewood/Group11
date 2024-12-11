@@ -1,0 +1,367 @@
+body {
+  background-image: 
+    linear-gradient(
+      rgba(119, 119, 119, 0.3), /* Red with some transparency */
+      rgba(0, 0, 0, 0.5)  /* Darker gradient overlay */
+    ),
+    url('../assets/argyle.png');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  margin: 0;
+  height: 100vh;
+  background-color: black;
+}
+
+.outer-container {
+  width: 90vw;
+  height: 90vh;
+  margin: auto;
+  background-color: black;
+  border: 1px solid black;
+  display: flex;
+  overflow: hidden;
+  border-radius: 1%;;
+}
+
+.background {
+  display: flex;
+  flex: 1;
+}
+
+.left-panel {
+  flex: 65%;
+  display: flex;
+  flex-direction: column; 
+  justify-content: space-between;  
+  align-items: center;
+  background-color: #333;
+  padding: 10px;
+  position: relative; 
+  overflow: hidden;  
+   background-image: url('../assets/argyle.png');
+   
+
+}
+
+input {
+  background-color: #090909 !important;
+}
+
+@keyframes scrollUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%); 
+  }
+}
+
+
+.right-panel {
+  flex: 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: white;
+
+}
+.title-container {
+  flex-grow: 1;  
+  display: flex;
+  justify-content: center; 
+  align-items: flex-start;
+  color: black !important;
+}
+.form-container {
+  
+  flex-grow: 7;  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.titre {
+  margin-top: 20%;
+  font-size: 100px;
+  z-index: 3;
+
+}
+
+
+
+#buttonContainer {
+  margin-top: 10%;
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  width: 100%;
+}
+
+.button {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.line-break {
+  display: block;
+  width: 1px;
+  height: 40px;
+  background-color: black;
+  margin-top: 10px;
+}
+
+#newUserForm,
+#existingUserForm {
+  display: none;
+  gap: 20%; /* Increased gap to create more space between the input fields */
+  width: 100%;
+  margin-top: 10%; /* Optional: Adds a gap between the form container and the inputs */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  padding: 10px;
+  width: 100%;
+  font-size: 16px;
+  border: none;
+  border-bottom: 2px solid rgb(177, 177, 177); /* Bottom border for the line effect */
+  background-color: transparent; /* Remove background color */
+  outline: none; /* Remove outline when clicked */
+  transition: border-bottom-color 0.3s ease; /* Smooth transition for border color */
+  color: black;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-bottom-color: black; 
+}
+
+#signUp,
+#logIn {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#signUp:hover,
+#logIn:hover {
+  background-color: #444;
+}
+
+
+
+#newUserForm.show,
+#existingUserForm.show {
+  display: grid; /* Display when activated */
+}
+
+.wrapper {
+  width: 100%;  /* Adjust width for better layout */
+  height: 49%;  /* Adjust height as needed */
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,        /* Fully transparent at the left edge */
+    rgba(0, 0, 0, 1) 5%,        /* Gradual fade starts at 5% */
+    rgba(0, 0, 0, 1) 95%,       /* Content remains fully visible between 5% to 95% */
+    rgba(0, 0, 0, 0) 100%       /* Fully transparent at the right edge */
+  );
+}
+
+
+@keyframes scrollLeft {
+  to {
+    left: -30%; /* Adjust to match item width */
+  }
+}
+
+.item {
+  width: 30%;
+  height: 48%;  /* Increase height here */
+  background-color: rgb(75, 74, 74);
+  border-radius: 6px;
+  position: absolute;
+  left: max(calc(28% * 8), 100%); /* Starting position */
+  animation: scrollLeft 30s linear infinite;
+  
+}
+
+.item1 {
+  animation-delay: calc(30s / 8 * (8 - 1) * -1);
+}
+
+.item2 {
+  animation-delay: calc(30s / 8 * (8 - 2) * -1);
+}
+
+.item3 {
+  animation-delay: calc(30s / 8 * (8 - 3) * -1);
+}
+
+.item4 {
+  animation-delay: calc(30s / 8 * (8 - 4) * -1);
+}
+
+.item5 {
+  animation-delay: calc(30s / 8 * (8 - 5) * -1);
+}
+
+.item6 {
+  animation-delay: calc(30s / 8 * (8 - 6) * -1);
+}
+
+.item7 {
+  animation-delay: calc(30s / 8 * (1) * -1);
+}
+
+.item8 {
+  animation-delay: calc(30s / 8 * (0) * -1);
+}
+
+
+/* pictures for games, had to apply them manually so dumb */
+.gameWrapper .item:nth-child(1) {
+  background-image: url('../assets/games/0.jpg');
+}
+
+.gameWrapper .item:nth-child(2) {
+  background-image: url('../assets/games/1.jpg');
+}
+
+.gameWrapper .item:nth-child(3) {
+  background-image: url('../assets/games/2.jpg');
+}
+
+.gameWrapper .item:nth-child(4) {
+  background-image: url('../assets/games/3.jpg');
+}
+
+.gameWrapper .item:nth-child(5) {
+  background-image: url('../assets/games/4.jpg');
+}
+
+.gameWrapper .item:nth-child(6) {
+  background-image: url('../assets/games/5.jpg');
+}
+
+.gameWrapper .item:nth-child(7) {
+  background-image: url('../assets/games/6.jpg');
+}
+
+.gameWrapper .item:nth-child(8) {
+  background-image: url('../assets/games/7.jpg');
+}
+
+.gameWrapper .item:nth-child(9) {
+  background-image: url('../assets/games/8.jpg');
+}
+
+.gameWrapper .item:nth-child(10) {
+  background-image: url('../assets/games/9.jpg');
+}
+
+.gameWrapper .item:nth-child(11) {
+  background-image: url('../assets/games/10.jpg');
+}
+
+.gameWrapper .item:nth-child(12) {
+  background-image: url('../assets/games/11.jpg');
+}
+
+.gameWrapper .item:nth-child(13) {
+  background-image: url('../assets/games/12.jpg');
+}
+
+.gameWrapper .item:nth-child(14) {
+  background-image: url('../assets/games/13.jpg');
+}
+
+.gameWrapper .item:nth-child(15) {
+  background-image: url('../assets/games/14.jpg');
+}
+
+.gameWrapper .item:nth-child(16) {
+  background-image: url('../assets/games/15.jpg');
+}
+
+/* pictures for movie (bottom side) */
+.movieWrapper .item:nth-child(1) {
+  background-image: url('../assets/movies/0.jpg');
+}
+
+.movieWrapper .item:nth-child(2) {
+  background-image: url('../assets/movies/1.jpg');
+}
+
+.movieWrapper .item:nth-child(3) {
+  background-image: url('../assets/movies/2.jpg');
+}
+
+.movieWrapper .item:nth-child(4) {
+  background-image: url('../assets/movies/3.jpg');
+}
+
+.movieWrapper .item:nth-child(5) {
+  background-image: url('../assets/movies/4.jpg');
+}
+
+.movieWrapper .item:nth-child(6) {
+  background-image: url('../assets/movies/5.jpg');
+}
+
+.movieWrapper .item:nth-child(7) {
+  background-image: url('../assets/movies/6.jpg');
+}
+
+.movieWrapper .item:nth-child(8) {
+  background-image: url('../assets/movies/7.jpg');
+}
+
+.movieWrapper .item:nth-child(9) {
+  background-image: url('../assets/movies/8.jpg');
+}
+
+.movieWrapper .item:nth-child(10) {
+  background-image: url('../assets/movies/9.jpg');
+}
+
+.movieWrapper .item:nth-child(11) {
+  background-image: url('../assets/movies/10.jpg');
+}
+
+.movieWrapper .item:nth-child(12) {
+  background-image: url('../assets/movies/11.jpg');
+}
+
+.movieWrapper .item:nth-child(13) {
+  background-image: url('../assets/movies/12.jpg');
+}
+
+.movieWrapper .item:nth-child(14) {
+  background-image: url('../assets/movies/13.jpg');
+}
+
+.movieWrapper .item:nth-child(15) {
+  background-image: url('../assets/movies/14.jpg');
+}
+
+.movieWrapper .item:nth-child(16) {
+  background-image: url('../assets/movies/15.jpg');
+}
+
+/* covering entire box */
+.gameWrapper .item,
+.movieWrapper .item {
+  background-size: cover;
+  background-position: center;
+}

@@ -1,0 +1,361 @@
+@import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+
+.voting-container{ /* essentially the entire page */
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, black, black);
+    position: relative;
+ 
+    background-image: url('../assets/texture.png'), url('../assets/hexPatterns.png');
+    background-size: cover, contain;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+    background-color: black;
+}
+
+.left-container{ /* left side of page like nav bar */
+    width: 0;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.left-container.expanded{
+    width:20vw;
+}
+
+.right-container{ /* awesome content for the card */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.voting-page{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:100vh;
+    padding: 0 50px;
+    position: relative;
+}
+
+.vs{  /* text styling */
+    position: absolute;
+    left: 40%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2800%;
+    font-weight: bold;
+    z-index: 1;
+    font-family: 'Bangers', cursive;
+    color: yellow;
+    text-shadow: 
+        2px 2px 0 black,
+        4px 4px 0 red,
+        6px 6px 5px rgba(0, 0, 0, 0.5);
+    line-height: 0.8;
+    opacity: 0;
+    animation: vsDrop 0.5s ease-out forwards;
+}
+.vs, .card { /* setting opacity to 0 */
+    opacity: 0;  
+    animation: none; 
+    transition: opacity 0.5s ease-in-out;
+}
+.left-card {
+    opacity: 0; 
+    animation: none;  
+}
+
+.right-card {
+    opacity: 0; 
+    animation: none;
+}
+.vs span.v{ /* positioning for letters */
+    position: relative;
+    top:-10px;
+    z-index: 2;
+   
+}
+.vs span.s{
+    position: relative;
+    top:10px;
+    right: 15%;
+}
+.card{ /*styling for the cards */
+    position: absolute;
+    width: 100%;
+    height: 70%;
+    background-color: red;
+    border: 2px solid black;
+    border-radius: 1%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: transform 0.3s ease-in-out;
+    opacity:0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* having to apply the images like this... */
+.card-0-Movie {
+    background-image: url('../assets/movies/0.jpg');
+  }
+  
+  .card-1-Movie {
+    background-image: url('../assets/movies/1.jpg');
+  }
+  
+  .card-2-Movie {
+    background-image: url('../assets/movies/2.jpg');
+  }
+  
+  .card-3-Movie {
+    background-image: url('../assets/movies/3.jpg');
+  }
+  
+  .card-4-Movie {
+    background-image: url('../assets/movies/4.jpg');
+  }
+  
+  .card-5-Movie {
+    background-image: url('../assets/movies/5.jpg');
+  }
+  
+  .card-6-Movie {
+    background-image: url('../assets/movies/6.jpg');
+  }
+  
+  .card-7-Movie {
+    background-image: url('../assets/movies/7.jpg');
+  }
+  
+  .card-8-Movie {
+    background-image: url('../assets/movies/8.jpg');
+  }
+  
+  .card-9-Movie {
+    background-image: url('../assets/movies/9.jpg');
+  }
+  
+  .card-10-Movie {
+    background-image: url('../assets/movies/10.jpg');
+  }
+  
+  .card-11-Movie {
+    background-image: url('../assets/movies/11.jpg');
+  }
+  
+  .card-12-Movie {
+    background-image: url('../assets/movies/12.jpg');
+  }
+  
+  .card-13-Movie {
+    background-image: url('../assets/movies/13.jpg');
+  }
+  
+  .card-14-Movie {
+    background-image: url('../assets/movies/14.jpg');
+  }
+  
+  .card-15-Movie {
+    background-image: url('../assets/movies/15.jpg');
+  }
+  
+/* game background */
+  .card-0-Game {
+    background-image: url('../assets/games/0.jpg');
+  }
+  
+  .card-1-Game {
+    background-image: url('../assets/games/1.jpg');
+  }
+  
+  .card-2-Game {
+    background-image: url('../assets/games/2.jpg');
+  }
+  
+  .card-3-Game {
+    background-image: url('../assets/games/3.jpg');
+  }
+  
+  .card-4-Game {
+    background-image: url('../assets/games/4.jpg');
+  }
+  
+  .card-5-Game {
+    background-image: url('../assets/games/5.jpg');
+  }
+  
+  .card-6-Game {
+    background-image: url('../assets/games/6.jpg');
+  }
+  
+  .card-7-Game {
+    background-image: url('../assets/games/7.jpg');
+  }
+  
+  .card-8-Game {
+    background-image: url('../assets/games/8.jpg');
+  }
+  
+  .card-9-Game {
+    background-image: url('../assets/games/9.jpg');
+  }
+  
+  .card-10-Game {
+    background-image: url('../assets/games/10.jpg');
+  }
+  
+  .card-11-Game {
+    background-image: url('../assets/games/11.jpg');
+  }
+  
+  .card-12-Game {
+    background-image: url('../assets/games/12.jpg');
+  }
+  
+  .card-13-Game {
+    background-image: url('../assets/games/13.jpg');
+  }
+  
+  .card-14-Game {
+    background-image: url('../assets/games/14.jpg');
+  }
+  
+  .card-15-Game {
+    background-image: url('../assets/games/15.jpg');
+  }
+  
+/* holding animations until yes is clicked */
+.vs.start-animation{
+    animation:vsDrop 1s ease-out forwards;
+}
+.card.start-animation{
+    animation: shuffleInLeft 1s forwards;
+
+}
+.right-card.start-animation{
+    animation: shuffleInRight 1s forwards;
+}
+.card:hover{
+    width: 103%;
+    height: 73%;
+    cursor: pointer;
+}
+@keyframes shuffleInLeft{ /* left deck shuffle animation */
+    0%{
+        transform: translate(-100vw, 100vh);
+        opacity:0;
+    }
+    100%{
+        transform: translate(0, 0);
+        opacity:1;
+    }
+}
+@keyframes shuffleInRight{ /* right deck shuffle animation */
+    0%{
+        transform: translate(100vw, 100vh);
+        opacity:0;
+    }
+    100%{
+        transform: translate(0, 0);
+        opacity:1;
+    }
+}
+
+@keyframes glow { /* glow on VS */
+    0% {
+        text-shadow: 1px 1px 0 red, 2px 2px 0 red, 4px 4px 3px rgba(0, 0, 0, 0.4);
+    }
+    50% {
+        text-shadow: 1px 1px 8px red, 2px 2px 12px red, 4px 4px 15px rgba(0, 0, 0, 0.5);
+    }
+    100% {
+        text-shadow: 1px 1px 0 red, 2px 2px 0 red, 4px 4px 3px rgba(0, 0, 0, 0.4);
+    }
+}
+.vs span{
+    animation: glow 1.5s ease-in-out infinite;
+}
+.boxes{ 
+    width: 50vh;
+    height: 100vh;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    position: absolute;
+    z-index: 0;
+  
+}
+
+.left-boxes{
+    right:150%;
+}
+.right-boxes{
+    left:150%;
+}
+
+@keyframes vsDrop{ /* vs drop animation, trying to add more */
+    0% {
+        transform: translate(-50%, -100vh); 
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, -50%); 
+        opacity: 1;
+    }
+}
+
+.popup{ /* popup styling */
+    position: fixed;
+   
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.pop-text{
+    font-family: 'Zen Dots', sans-serif;
+    font-size: 3rem; 
+    color: rgb(253, 253, 253); 
+    text-shadow: 
+        2px 2px 4px rgba(77, 69, 69, 0.8), 
+        -2px -2px 4px rgba(0, 0, 0, 0.8),   
+        3px 3px 5px rgba(12, 12, 12, 0.8),    
+        -3px -3px 5px rgba(138, 138, 93, 0.8); 
+    line-height: 5; 
+    animation: idleAnimation 5s ease-in-out infinite;
+    margin-top: -20%;
+}
+
+.popup-buttons{
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 1rem;
+}
+
+.popup-buttons button{
+    font-size: 1.5rem;
+    padding: 0.8rem 7rem;
+    border:none;
+    
+}
+.popup-buttons button:hover{
+    background-color: rgb(226, 208, 208);
+}
+

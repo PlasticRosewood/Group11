@@ -1,0 +1,58 @@
+.rbWrapper {
+    height: 100%;
+    min-height: 250px;
+    width: 100%;
+    border: 10px solid #333;
+    background-color: #1a1a1a;
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 2fr 2fr; /* Adjusted grid to allow more space */
+    grid-gap: 20px; /* Add space between grid items */
+    padding: 20px; /* Adds padding around the whole RankBox */
+    overflow: hidden;
+    border-radius: 15px; /* Rounded corners for a smoother look */
+    color: #f0f0f0;
+}
+
+.rankText, .memberName {
+    place-self: center;
+    font-size: 2rem; /* Make text larger for better readability */
+    font-weight: bold; /* Bold rank and name for emphasis */
+}
+
+.coverArtWrapper {
+    width: 90%; 
+    max-width: 200px; /* Increased width for cover art */
+    height: auto;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 15px; /* Increased margin for spacing */
+    place-self: center;
+}
+
+.coverArt {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.globalStats {
+    display: grid;
+    grid-template-rows: 35% 25% 40%; /* Adjusted row distribution for better use of space */
+    gap: 10px; /* Space between items in the globalStats section */
+}
+
+.globalStats > img {
+    width: 50%; /* Keeps the image size appropriate */
+    height: auto;
+    aspect-ratio: 1/1;
+    margin: 12px;
+    place-self: center;
+}
+
+.globalStats > h3 {
+    justify-self: center;
+    font-size: 1.2rem; /* Increased font size for better readability */
+    font-weight: bold; /* Makes the "Global" text stand out */
+    color: #f0f0f0; /* Darker text for contrast */
+}

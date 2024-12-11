@@ -1,0 +1,58 @@
+#leaderboardContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 40px; /* Space between movie and game leaderboards */
+}
+
+input {
+    color: white !important;
+}
+
+.leaderboardSubsection {
+    width: 100%;
+    max-width: 800px; /* Max width to limit size on larger screens */
+    padding: 20px;
+    background-color: #151515;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+  
+#movieLeaderboard, #gameLeaderboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between leaderboard items */
+}
+  
+h1 {
+    font-size: 2rem;
+    color: #f0f0f0;
+    margin-bottom: 10px;
+}
+  
+.itemsList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between each RankBox */
+    overflow-y: auto; /* Allows scrolling when content overflows */
+    max-height: 500px; /* Maximum height before scrolling is needed */
+    padding-right: 10px; /* To avoid the scrollbar overlapping the content */
+}
+  
+.scrollable {
+    overflow-y: auto;
+}
+  
+.scrollable::-webkit-scrollbar {
+    width: 8px;
+}
+  
+.scrollable::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+  
+.scrollable::-webkit-scrollbar-thumb:hover {
+    background-color: #888;
+}
